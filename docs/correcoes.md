@@ -14,12 +14,12 @@ Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda
 
 | # | Ponto do parecer | Gravidade | Status |
 |---|---|---|---|
-| 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código corrigido; ⏳ texto §7.1 |
-| 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | ✅ verificado; ⏳ definição operacional no texto |
-| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | ⏳ trocar por L²/percentil/erro de fluxo |
-| 2.4 | PINN com 1 semente; sem custo computacional | Alto | ✅ rodado (CPU): G_ef 0,982±0,002 (abaixo de Reuss); ~15 min |
-| 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência levantada; ⏳ reescrever afirmações |
-| 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | ⏳ ver seções abaixo |
+| 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código + texto §7.1 (Dirichlet exato, ordem ~1,5) |
+| 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | 🔧 dígitos + Voigt–Reuss no texto; ⏳ def. operacional / nome "aparente" |
+| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | 🔧 max/p99/max_far no texto+tabela; ⏳ erro de fluxo normal |
+| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 multi-seed + tempo ✅; ⏳ tabela de custo, sensibilidade λ, L-BFGS |
+| 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência + abstract/conclusão reescritos |
+| 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | 🔧 ver seções abaixo |
 
 ---
 

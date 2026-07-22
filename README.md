@@ -140,7 +140,7 @@ Caso oficial, malha `N=80` (`81×81` nós):
 |---|---|
 | `G_ef` (MDF) | **1,139769** |
 | `G_ef` (MEF) | **1,139824** |
-| `G_ef` (PINN, 5 sementes) | **0,982 ± 0,002** ⚠️ abaixo de Reuss |
+| `G_ef` (PINN, 5 sementes) | **0,982 ± 0,002** abaixo de Reuss |
 | Limites Voigt/Reuss | [1,0776 ; 1,3600] → MDF/MEF consistentes; **PINN viola Reuss** |
 | Erro L² MEF×MDF — `w` | 3,4×10⁻³ |
 | Erro L² MEF×MDF — `τ_xz` | 1,1×10⁻¹ |
@@ -156,10 +156,3 @@ Validação (inclusão circular, `Gᵢ=10`), erro L² no interior `0.2 ≤ x,y �
 | 160 | 1,49×10⁻² (estagna) | 8,34×10⁻⁴ (converge, ordem ~1,5) |
 
 Custo aproximado (CPU, `N=80`): MDF ~0,2 s · MEF ~3 s · PINN ~180 s/semente.
-
-## Estado / correções
-
-Repositório em **revisão** segundo o parecer técnico-editorial (alvo: **REMAT**). O
-rastro completo do que foi corrigido e por quê está em
-[`docs/correcoes.md`](docs/correcoes.md); as correções do manuscrito estão aplicadas
-em `paper/…/TCAM_template.tex` (a compilação final é no Overleaf).

@@ -1,10 +1,5 @@
 """Solucao analitica do cisalhamento antiplano para INCLUSAO CIRCULAR.
 
-Usada apenas para validacao (secao 2 do CLAUDE.md). O caso quadrado oficial nao
-tem solucao fechada; por isso validamos cada solver contra esta solucao circular
-classica (inclusao circular de raio a em matriz com deformacao remota w_inf = gamma*x),
-avaliada longe das bordas (a teoria supoe matriz infinita).
-
 Coordenadas polares com origem no CENTRO da inclusao (= centro do dominio):
     Dentro (r < a):  wi = [ 2 Gm / (Gi + Gm) ] * gamma * r * cos(theta)
     Fora   (r > a):  wm = gamma*r*cos(theta) + gamma*a^2*(Gm-Gi)/(Gm+Gi)*cos(theta)/r
@@ -16,7 +11,6 @@ w(0,y) ~ 0 e w(L,y) ~ gamma*L longe da inclusao.
 """
 
 import numpy as np
-
 from .geometry import Case
 
 

@@ -28,8 +28,13 @@ def _harmonic(a, b):
     return 2.0 * a * b / s
 
 
-def solve_fdm(case: Case, N=80):
+def solve_fdm(case: Case, N=80, bc_func=None):
     """Resolve o problema por MDF.
+
+    Se ``bc_func(x, y, case)`` for fornecida, impoe Dirichlet EXATO dessa funcao
+    em TODO o contorno (usado na validacao, secao 7.1, para resolver o MESMO BVP
+    da solucao de referencia). Caso contrario usa as BCs oficiais: Dirichlet nas
+    laterais (x=0, x=L) e Neumann homogeneo no topo/base.
 
     Retorna dict com X, Y (malha 'ij'), W (deslocamento), txz, tyz, Gef, h, N, case.
     """
@@ -55,15 +60,29 @@ def solve_fdm(case: Case, N=80):
         for j in range(n):
             k = idx(i, j)
 
-            # --- Dirichlet nas laterais esquerda/direita (x = 0, x = L) ---
-            if i == 0:
-                A[k, k] = 1.0
-                b[k] = 0.0                 # w(0, y) = 0
-                continue
-            if i == N:
-                A[k, k] = 1.0
-                b[k] = case.gamma * case.L  # w(L, y) = gamma*L
-                continue
+            on_boundary = (i == 0 or i == N or j == 0 or j == N)
+
+            # --- Validacao (secao 7.1): Dirichlet EXATO da solucao de
+            #     referencia em TODO o contorno do quadrado. Faz o problema
+            #     numerico resolver o MESMO BVP que a analitica, em vez do
+            #     problema de meio infinito -> validacao consistente e
+            #     convergencia limpa (parecer 2.1).
+            if bc_func is not None:
+                if on_boundary:
+                    A[k, k] = 1.0
+                    b[k] = float(bc_func(X[i, j], Y[i, j], case))
+                    continue
+            else:
+                # --- Caso oficial: Dirichlet nas laterais (x=0, x=L) +
+                #     Neumann homogeneo no topo/base (nos-fantasma abaixo) ---
+                if i == 0:
+                    A[k, k] = 1.0
+                    b[k] = 0.0                 # w(0, y) = 0
+                    continue
+                if i == N:
+                    A[k, k] = 1.0
+                    b[k] = case.gamma * case.L  # w(L, y) = gamma*L
+                    continue
 
             # Coeficientes das faces. Para j nas bordas (topo/base), Neumann
             # homogeneo via no-fantasma: a face que sairia do dominio tem

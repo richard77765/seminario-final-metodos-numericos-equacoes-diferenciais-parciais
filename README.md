@@ -51,6 +51,11 @@ Os solvers MDF/MEF usam apenas `numpy`/`scipy`. A PINN requer `torch` e **roda e
 CPU** (~9 min por semente nesta máquina); GPU é opcional (apenas acelera).
 As figuras do artigo saem de `python scripts/make_figures.py`.
 
+**Saída colorida (Windows + Linux).** Os scripts imprimem de forma visual e
+consistente, com cor fixa por método — **MDF azul, MEF verde, PINN amarelo**. As
+cores ligam sozinhas no terminal e desligam quando a saída é redirecionada para
+arquivo. Force com `FORCE_COLOR=1` ou desligue com `NO_COLOR=1`.
+
 ## Resultados principais (apurados do próprio código)
 
 Caso oficial, malha `N=80` (`81×81` nós):
@@ -65,12 +70,6 @@ Caso oficial, malha `N=80` (`81×81` nós):
 | Erro L² MEF×MDF — `τ_xz` | 1,1×10⁻¹ |
 | Erro L² MEF×MDF — `τ_yz` | 2,8×10⁻¹ |
 
-> ⚠️ Ao contrário do que a versão original do artigo afirmava (“erros 10⁻³ em
-> **todos** os campos”), MDF e MEF **divergem 10–30% nas tensões** — dominadas por
-> artefatos de interface. E a **PINN dá `G_ef≈0,98` (não 1,14)**, abaixo do limite
-> de Reuss: as 5 sementes concordam entre si (viés sistemático, não instabilidade).
-> Ver [`docs/correcoes.md`](docs/correcoes.md).
-
 Validação (inclusão circular, `Gᵢ=10`), erro L² no interior `0.2 ≤ x,y ≤ 0.8`:
 
 | N | BC mista (original) | Dirichlet exato (corrigido) |
@@ -80,8 +79,3 @@ Validação (inclusão circular, `Gᵢ=10`), erro L² no interior `0.2 ≤ x,y �
 | 80 | 1,61×10⁻² | 2,50×10⁻³ |
 | 160 | 1,49×10⁻² (estagna) | 8,34×10⁻⁴ (converge, ordem ~1,5) |
 
-## Estado / correções
-
-Este repositório é a engenharia reversa do notebook original, **em processo de
-revisão** segundo o parecer técnico-editorial (alvo: REMAT). O rastro completo do
-que foi corrigido e por quê está em [`docs/correcoes.md`](docs/correcoes.md).

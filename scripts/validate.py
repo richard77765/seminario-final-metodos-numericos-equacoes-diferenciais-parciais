@@ -20,6 +20,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src import console as ui
 from src.analytic import w_analytic
 from src.fdm import solve_fdm
 from src.geometry import VALIDATION
@@ -43,11 +44,11 @@ def convergencia(bc_func):
 
 
 def imprime(titulo, linhas):
-    print(titulo)
-    for N, e, ordem in linhas:
-        o = "    ---" if ordem is None else f"ordem~{ordem:+.2f}"
-        print(f"  N={N:3d}  e_rel(L2)={e:.4e}  {o}")
     print()
+    print("  " + titulo)
+    for N, e, ordem in linhas:
+        o = ui.paint("  ---", "dim") if ordem is None else f"ordem~{ordem:+.2f}"
+        print(f"    N={N:<3d}  e_rel(L2)={ui.value(f'{e:.4e}')}   {o}")
 
 
 def salva_csv(caminho, mista, dirichlet):
@@ -56,19 +57,24 @@ def salva_csv(caminho, mista, dirichlet):
         f.write("N,e_rel_bc_mista,e_rel_dirichlet_exato\n")
         for (N, em, _), (_, ed, _) in zip(mista, dirichlet):
             f.write(f"{N},{em:.6e},{ed:.6e}\n")
-    print(f"Tabela salva em: {caminho}")
+    ui.ok(f"Tabela: {os.path.relpath(caminho)}")
 
 
 if __name__ == "__main__":
+    ui.header("Validacao do MDF vs solucao analitica (inclusao circular)")
+    print("  solver: " + ui.method("MDF"))
+    ui.step("Rodando convergencia: BC mista vs Dirichlet exato...")
     mista = convergencia(bc_func=None)         # BCs oficiais (meio infinito != finito)
     dirichlet = convergencia(bc_func=w_analytic)  # mesmo BVP da referência
 
-    print("=" * 66)
-    imprime("ANTES  - BC mista (w=0, w=gamma*L, Neumann): erro ESTAGNA", mista)
-    imprime("DEPOIS - Dirichlet EXATO da analitica no contorno: CONVERGE", dirichlet)
-    print("Obs.: a ordem fica ~1,5 (nao 2) porque a interface circular e")
-    print("representada 'em escada' na malha cartesiana (parecer 3.4).")
-    print("=" * 66)
+    imprime(ui.paint("ANTES ", "yellow", "bold")
+            + " BC mista (w=0, w=gamma*L, Neumann)  ->  erro ESTAGNA", mista)
+    imprime(ui.paint("DEPOIS", "green", "bold")
+            + " Dirichlet EXATO no contorno  ->  CONVERGE", dirichlet)
+
+    print()
+    ui.dim("  Obs.: a ordem fica ~1,5 (nao 2) porque a interface circular e")
+    ui.dim("  representada 'em escada' na malha cartesiana (parecer 3.4).")
 
     salva_csv(
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),

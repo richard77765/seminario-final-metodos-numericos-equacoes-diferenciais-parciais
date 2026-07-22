@@ -17,6 +17,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import console as ui
 from src.analytic import w_analytic
 from src.fdm import solve_fdm
 from src.fem import solve_fem
@@ -67,32 +68,37 @@ def _tabela(nome, rows, header="N,e_rel,ordem"):
     return caminho
 
 
-def _print(titulo, rows):
-    print(titulo)
-    for N, e, o in rows:
-        oo = "  ---" if o is None else f"ordem~{o:+.2f}"
-        print(f"  N={N:3d}  e_rel={e:.4e}  {oo}")
+def _print(titulo, rows, meth=None):
+    label = f"{ui.method(meth)}  " if meth else ""
     print()
+    print("  " + label + ui.paint(titulo, "bold"))
+    for N, e, o in rows:
+        oo = ui.paint("  ---", "dim") if o is None else f"ordem~{o:+.2f}"
+        print(f"    N={N:<3d}  e_rel={ui.value(f'{e:.4e}')}   {oo}")
 
 
 if __name__ == "__main__":
-    print("=" * 64)
+    ui.header("Estudos de convergencia")
+    ui.legend()
+    ui.step("Rodando MDF (circular + quadrada, ref N=240) e MEF (ref N=160)...")
+
     r_circ = circular_mdf()
-    _print("(a) CIRCULAR  MDF Dirichlet-exato vs analitica (interior)", r_circ)
+    _print("Circular - MDF Dirichlet-exato vs analitica (interior)", r_circ, "MDF")
     _tabela("conv_circular_mdf.csv", r_circ)
 
     r_sq_mdf_w = square_self(solve_fdm, 240, [20, 40, 80], "W")
-    _print("(b) QUADRADA  MDF auto-conv. em w (ref N=240)", r_sq_mdf_w)
+    _print("Quadrada - auto-convergencia em w  (ref N=240)", r_sq_mdf_w, "MDF")
     _tabela("conv_quadrada_mdf_w.csv", r_sq_mdf_w)
 
     r_sq_mdf_t = square_self(solve_fdm, 240, [20, 40, 80], "txz")
-    _print("(b) QUADRADA  MDF auto-conv. em txz (ref N=240)", r_sq_mdf_t)
+    _print("Quadrada - auto-convergencia em tau_xz  (ref N=240)", r_sq_mdf_t, "MDF")
     _tabela("conv_quadrada_mdf_txz.csv", r_sq_mdf_t)
 
     r_sq_fem_w = square_self(solve_fem, 160, [20, 40, 80], "W")
-    _print("(b) QUADRADA  MEF auto-conv. em w (ref N=160)", r_sq_fem_w)
+    _print("Quadrada - auto-convergencia em w  (ref N=160)", r_sq_fem_w, "MEF")
     _tabela("conv_quadrada_mef_w.csv", r_sq_fem_w)
 
-    print("Leitura: circular ~ordem 1.5 (interface em escada); w quadrado converge")
-    print("bem; txz converge mais devagar (concentracao nas quinas -> parecer 2.3).")
-    print("=" * 64)
+    print()
+    ui.dim("  Leitura: circular ~ordem 1.5 (interface em escada). Em w: MDF ~0.9,")
+    ui.dim("  MEF ~1.7. Em tau_xz: ~0.5 (concentracao nas quinas -> parecer 2.3).")
+    ui.ok("Tabelas salvas em outputs/tables/")

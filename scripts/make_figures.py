@@ -20,6 +20,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import console as ui
 from src import viz
 from src.fdm import solve_fdm
 from src.fem import solve_fem
@@ -37,6 +38,9 @@ def _csv(name):
 
 
 def main():
+    ui.header("Gerando figuras do artigo")
+    ui.legend()
+    ui.step("Resolvendo MDF e MEF (N=80)...")
     sol_fdm = solve_fdm(OFFICIAL, N=80)
     sol_fem = solve_fem(OFFICIAL, N=80)
     sols = {"MDF": sol_fdm, "MEF": sol_fem}
@@ -46,7 +50,10 @@ def main():
         d = np.load(npz[0])
         sols["PINN"] = dict(X=d["X"], Y=d["Y"], W=d["W"], txz=d["txz"],
                             tyz=d["tyz"], case=OFFICIAL)
-        print(f"PINN carregada de {os.path.basename(npz[0])}")
+        ui.info(f"{ui.method('PINN')} carregada de {os.path.basename(npz[0])}")
+    else:
+        ui.warn("sem .npz da PINN -> figuras da PINN puladas (rode pinn_seeds.py)")
+    ui.step("Renderizando campos, perfis, convergencia e parametrico...")
 
     # --- Campos e perfis ---
     viz.fig_panel_contourf(sols, OFFICIAL, field="W", save="fig_painel_w_curvas.png")
@@ -95,8 +102,9 @@ def main():
                            save="fig_pinn_scatter.png", label="PINN")
 
     plt.close("all")
-    metodos = "+".join(sols.keys())
-    print(f"Figuras geradas em outputs/figures/ (metodos: {metodos})")
+    chips = "  ".join(ui.method(m) for m in sols)
+    print()
+    ui.ok(f"Figuras em outputs/figures/   (metodos: {chips})")
 
 
 if __name__ == "__main__":

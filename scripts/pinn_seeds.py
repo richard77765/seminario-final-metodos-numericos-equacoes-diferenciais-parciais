@@ -22,6 +22,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import console as ui
 from src import pinn
 from src.fdm import solve_fdm
 from src.geometry import OFFICIAL
@@ -47,7 +48,11 @@ def main():
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     seeds = [int(s) for s in args.seeds.split(",") if s.strip() != ""]
 
-    print(f"device = {device} | epochs = {args.epochs} | sementes = {seeds}")
+    ui.header("PINN decomposta  -  estudo multi-semente")
+    ui.kv("device", device)
+    ui.kv("epocas", args.epochs)
+    ui.kv("sementes", ", ".join(map(str, seeds)))
+    ui.step("Resolvendo referencia MDF e treinando (cada semente ~9 min em CPU)...")
     ref = solve_fdm(OFFICIAL, N=80)  # referência = MDF
 
     linhas = []
@@ -69,20 +74,29 @@ def main():
         linhas.append(dict(seed=s, Gef=sol["Gef"], err_w=err["w"],
                            err_txz=err["txz"], err_tyz=err["tyz"],
                            loss_final=hist["total"][-1], tempo_s=dt))
-        print(f"  seed {s:3d}: Gef={sol['Gef']:.5f}  err_w={err['w']:.2e}  "
-              f"err_txz={err['txz']:.2e}  ({dt:.1f}s)")
+        gef_s = ui.value(f"{sol['Gef']:.5f}")
+        print(f"  {ui.method('PINN')} seed {s:<2d}  Gef={gef_s}  "
+              f"err_w={err['w']:.2e}  err_txz={err['txz']:.2e}  "
+              f"{ui.paint(str(round(dt)) + 's', 'gray')}")
 
     def ms(chave):
         v = np.array([l[chave] for l in linhas], float)
         return v.mean(), v.std(), v.min(), v.max()
 
-    print("\n== Resumo (media +/- desvio | min | max) ==")
-    print(f"parametros treinaveis (2 redes): {n_par}")
-    print(f"tempo total: {time.time() - t_global:.1f}s")
+    ui.section("Resumo  (media +/- desvio  |  [min, max])")
+    ui.kv("parametros treinaveis", f"{n_par}  (2 redes)")
+    ui.kv("tempo total", f"{round(time.time() - t_global)} s")
     campos = ["Gef", "err_w", "err_txz", "err_tyz", "tempo_s"]
     for c in campos:
         m, d, lo, hi = ms(c)
-        print(f"  {c:9s} {m:.5f} +/- {d:.5f}   [{lo:.5f}, {hi:.5f}]")
+        ui.kv(c, f"{m:.5f} +/- {d:.5f}   [{lo:.5f}, {hi:.5f}]")
+
+    gef_m = ms("Gef")[0]
+    if gef_m < 1.078:
+        ui.warn(f"G_ef = {gef_m:.3f} esta ABAIXO do limite de Reuss (1.078) "
+                "-> vies sistematico: a PINN quase ignora a inclusao")
+    else:
+        ui.ok(f"G_ef = {gef_m:.3f} dentro dos limites fisicos")
 
     os.makedirs(TAB, exist_ok=True)
     with open(os.path.join(TAB, "pinn_seeds.csv"), "w", encoding="utf-8",
@@ -99,7 +113,7 @@ def main():
             m, d, lo, hi = ms(c)
             f.write(f"{c},{m:.6f},{d:.6f},{lo:.6f},{hi:.6f}\n")
         f.write(f"n_parametros,{n_par},0,{n_par},{n_par}\n")
-    print("Tabelas: outputs/tables/pinn_seeds.csv, pinn_seeds_resumo.csv")
+    ui.ok("Tabelas: outputs/tables/pinn_seeds.csv, pinn_seeds_resumo.csv")
 
 
 if __name__ == "__main__":

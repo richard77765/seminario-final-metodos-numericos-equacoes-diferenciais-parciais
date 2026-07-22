@@ -16,6 +16,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import console as ui
 from src.fdm import solve_fdm
 from src.geometry import Case
 from src.metrics import robust_stress_metrics
@@ -25,20 +26,22 @@ RATIOS = [1, 2, 5, 10, 50, 100]
 
 if __name__ == "__main__":
     os.makedirs(TAB, exist_ok=True)
-    print("=" * 70)
-    print(f"{'Gi/Gm':>6s} {'G_ef':>10s} {'max|tau|':>10s} {'p99':>10s} "
-          f"{'max_far':>10s}")
+    ui.header("Estudo parametrico do contraste  Gi/Gm   (MDF, N=80)")
+    print("  solver: " + ui.method("MDF"))
+    print("  " + ui.paint(f"{'Gi/Gm':>6s}{'G_ef':>11s}{'max|tau|':>12s}"
+                          f"{'p99':>11s}{'max_far':>11s}", "gray"))
     linhas = []
     for r in RATIOS:
         case = Case(L=1, a=0.15, Gm=1.0, Gi=float(r), gamma=0.01, shape="square")
         s = solve_fdm(case, N=80)
         m = robust_stress_metrics(s, case, delta=0.05)
-        print(f"{r:6d} {s['Gef']:10.4f} {m['max']:10.4f} {m['p99']:10.4f} "
-              f"{m['max_far']:10.4f}")
+        gef_s = ui.value(f"{s['Gef']:>11.4f}")
+        print(f"  {r:>6d}{gef_s}{m['max']:>12.4f}"
+              f"{m['p99']:>11.4f}{m['max_far']:>11.4f}")
         linhas.append((r, s["Gef"], m))
-    print("=" * 70)
-    print("G_ef cresce e SATURA; note que 'max' cresce mais que p99/max_far,")
-    print("confirmando que o pico pontual e dominado pela singularidade de quina.")
+    print()
+    ui.dim("  G_ef cresce e desacelera. max|tau| cresce ~100x mas p99 so ~15x:")
+    ui.dim("  o pico pontual e dominado pela singularidade de quina (parecer 2.3).")
 
     with open(os.path.join(TAB, "parametrico_contraste.csv"), "w",
               encoding="utf-8", newline="\n") as f:

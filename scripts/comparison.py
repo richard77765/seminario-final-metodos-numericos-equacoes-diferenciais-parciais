@@ -8,6 +8,8 @@ Endereça:
   - parecer 2.3: max|tau| não é robusto; reporta-se também p99 e max fora das
     quinas (max_far).
 
+Cores: MDF azul, MEF verde (ver src/console.py).
+
 Uso:  python scripts/comparison.py
 """
 
@@ -19,6 +21,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import console as ui
 from src.fdm import solve_fdm
 from src.fem import solve_fem
 from src.geometry import OFFICIAL
@@ -36,32 +39,39 @@ def voigt_reuss(case):
 
 if __name__ == "__main__":
     os.makedirs(TAB, exist_ok=True)
+    ui.header("Comparacao no caso oficial  (L=1, a=0.15, Gm=1, Gi=5, N=80)")
+    ui.legend()
+
+    ui.step("Resolvendo MDF e MEF...")
     sol_fdm = solve_fdm(OFFICIAL, N=80)
     sol_fem = solve_fem(OFFICIAL, N=80)
 
     gr, gv, f = voigt_reuss(OFFICIAL)
-    print("=" * 64)
-    print(f"G_ef  MDF = {sol_fdm['Gef']:.6f}")
-    print(f"G_ef  MEF = {sol_fem['Gef']:.6f}")
-    print(f"Voigt/Reuss (f={f:.3f}): [{gr:.4f}, {gv:.4f}]  -> ambos consistentes")
+    ui.section("Modulo efetivo  G_ef = <tau_xz>/gamma")
+    ui.method_line("MDF", ui.value(f"{sol_fdm['Gef']:.6f}"))
+    ui.method_line("MEF", ui.value(f"{sol_fem['Gef']:.6f}"))
+    ui.kv("Voigt / Reuss", f"[{gr:.4f} ; {gv:.4f}]   (fracao de area f = {f:.3f})")
+    if gr <= sol_fdm["Gef"] <= gv:
+        ui.ok("MDF e MEF dentro dos limites de Voigt-Reuss")
+    else:
+        ui.warn("fora dos limites de Voigt-Reuss")
 
-    err = field_errors(sol_fem, sol_fdm)  # MEF vs MDF (referencia)
-    print("\nErro L2 MEF vs MDF (MDF = referencia; NAO prova acuracia absoluta):")
-    print(f"  w   = {err['w']:.3e}")
-    print(f"  txz = {err['txz']:.3e}")
-    print(f"  tyz = {err['tyz']:.3e}")
-    print("  -> tensoes divergem 10-30%: a afirmacao '10^-3 em TODOS os campos'"
-          " e falsa.")
+    err = field_errors(sol_fem, sol_fdm)
+    ui.section("Erro relativo L2 do MEF  (referencia = MDF)")
+    ui.kv("w", ui.value(f"{err['w']:.3e}"))
+    ui.kv("tau_xz", ui.value(f"{err['txz']:.3e}"))
+    ui.kv("tau_yz", ui.value(f"{err['tyz']:.3e}"))
+    ui.dim("  proximidade ao MDF nao prova acuracia absoluta; as tensoes divergem 10-30%")
 
-    print("\nMetricas de tensao |tau| (parecer 2.3):")
-    print(f"{'metodo':6s} {'max':>10s} {'p99':>10s} {'max_far':>10s} {'l2':>10s}")
+    ui.section("Metricas robustas de |tau|  (parecer 2.3)")
+    print("        " + ui.paint(f"{'max':>10s}{'p99':>11s}{'max_far':>11s}{'L2':>11s}",
+                                 "gray"))
     rows = []
-    for nome, sol in [("MDF", sol_fdm), ("MEF", sol_fem)]:
-        mtr = robust_stress_metrics(sol, OFFICIAL, delta=0.05)
-        print(f"{nome:6s} {mtr['max']:10.4f} {mtr['p99']:10.4f} "
-              f"{mtr['max_far']:10.4f} {mtr['l2']:10.4f}")
-        rows.append((nome, mtr))
-    print("=" * 64)
+    for name, sol in (("MDF", sol_fdm), ("MEF", sol_fem)):
+        m = robust_stress_metrics(sol, OFFICIAL, delta=0.05)
+        ui.method_line(name, f"{m['max']:>10.4f}{m['p99']:>11.4f}"
+                             f"{m['max_far']:>11.4f}{m['l2']:>11.4f}")
+        rows.append((name, m))
 
     with open(os.path.join(TAB, "comparacao_oficial.csv"), "w",
               encoding="utf-8", newline="\n") as fcsv:
@@ -74,4 +84,6 @@ if __name__ == "__main__":
         fcsv.write("campo,erro_rel_L2\n")
         for k in ("w", "txz", "tyz"):
             fcsv.write(f"{k},{err[k]:.6e}\n")
-    print("Tabelas: outputs/tables/comparacao_oficial.csv, erros_mef_vs_mdf.csv")
+
+    print()
+    ui.ok("Tabelas: outputs/tables/comparacao_oficial.csv, erros_mef_vs_mdf.csv")

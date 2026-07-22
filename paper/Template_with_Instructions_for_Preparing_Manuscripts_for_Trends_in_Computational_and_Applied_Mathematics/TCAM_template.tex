@@ -46,6 +46,7 @@ tabsize=2
 %********************************************************
 \usepackage{framed}
 \usepackage{tikz}
+\usepackage{placeins} % \FloatBarrier: impede floats de migrarem entre secoes
 
 %********************************************************
 % PAPER INFORMATION
@@ -732,7 +733,7 @@ $N$ & $e_{rel}$ & ordem & MDF & MEF \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{fig_convergencia.png}
     \caption{Convergência do erro relativo $L^2$ em $w$ (escala log--log). Os dados
@@ -796,7 +797,7 @@ O resultado apresentado na Figura \ref{fig:comparacao_mdf}, representa a soluç�
 Podemos observar como a tensão de cisalhamento é maior na inclusão, e o deslocamento aumenta conforme se afasta da origem.
 
 Já para a simulação obtida através do Método de Elementos Finitos, os resultados foram bem próximos e podem ser observados na Figura \ref{fig:mef}.
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.5\linewidth]{mef.png}
     \caption{Resultado obtido através do método de elementos finitos}
@@ -805,7 +806,7 @@ Já para a simulação obtida através do Método de Elementos Finitos, os resul
 
 A Figura~\ref{fig:painel_w} compara o campo de deslocamento dos três métodos na
 mesma escala de cores.
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{fig_painel_w.png}
     \caption{Campo de deslocamento $w$ pelos três métodos, na mesma escala de cores.
@@ -843,7 +844,7 @@ PINN & $(4{,}3\pm0{,}1)\times10^{-2}$ & $3{,}0\times10^{-1}$ & $9{,}9\times10^{-
 
 A Figura~\ref{fig:erro} apresenta os erros relativos em norma $L^2$ do MEF e da PINN,
 ambos tomando o MDF como referência.
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.6\linewidth]{erro.png}
     \caption{Erros relativos em norma $L^2$ por método, tomando o MDF como
@@ -881,7 +882,7 @@ $G_i/G_m$ & $G_{ef}$ & $\max|\tau|$ & $p_{99}|\tau|$ & $\max_{\text{far}}|\tau|$
 \end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\linewidth]{fig_parametrico.png}
     \caption{Estudo de contraste $G_i/G_m$. À esquerda, $G_{ef}$ (cresce e
@@ -894,6 +895,7 @@ $G_i/G_m$ & $G_{ef}$ & $\max|\tau|$ & $p_{99}|\tau|$ & $\max_{\text{far}}|\tau|$
 %*************************************************************
 % DATA AVAILABILITY - This section is mandatory
 % CHOOSE ONE OPTION AND REMOVE THE OTHERS
+\FloatBarrier % garante que todas as figuras/tabelas do secao 7 sejam colocadas antes daqui
 \newpage
 \section*{Disponibilidade de dados e código}
 

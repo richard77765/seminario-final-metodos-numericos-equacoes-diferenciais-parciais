@@ -754,6 +754,7 @@ interface matriz--inclusão. No MEF, o valor de $G$ é atribuído por elemento a
 do centroide, usando elementos quadrilaterais Q4 com quadratura de Gauss $2{\times}2$.
 
 \subsection{Validação contra solução analítica}
+\label{sec:validacao}
 
 Antes de analisar o caso oficial (inclusão quadrada), os solvers foram validados
 contra a solução analítica para inclusão \emph{circular} de raio $a = 0{,}15$
@@ -815,8 +816,9 @@ $N$ & $e_{rel}$ & ordem & MDF & MEF \\
 \subsection{Módulo efetivo e comparação entre métodos}
 
 Para o caso oficial ($L=1$, $a=0{,}15$, $G_m=1$, $G_i=5$, $\gamma=0{,}01$)
-com malha $N=80$, os três métodos forneceram valores de módulo efetivo
-concordantes, como apresentado na Tabela~\ref{tab:gef}.
+com malha $N=80$, MDF e MEF forneceram valores de módulo efetivo praticamente
+idênticos, enquanto a PINN subestimou a propriedade, como apresentado na
+Tabela~\ref{tab:gef}.
 
 \begin{table}[h]
 \centering
@@ -874,6 +876,30 @@ Já para a simulação obtida através do Método de Elementos Finitos, os resul
     \label{fig:mef}
 \end{figure}
 
+A solução obtida pela PINN é apresentada na Figura~\ref{fig:pinn}. Embora reproduza
+o deslocamento global com boa correlação em relação ao MDF ($R^2 \approx 0{,}99$), o
+campo é quase homogêneo: a rede praticamente não deflete as isolinhas em torno da
+inclusão --- o que se traduz na subestimação de $G_{ef}$ e nos maiores erros de
+tensão discutidos adiante.
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.47\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{fig_pinn_w.png}
+        \caption*{(a) campo $w$}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.47\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{fig_pinn_scatter.png}
+        \caption*{(b) $w_{\text{PINN}}$ vs. $w_{\text{MDF}}$}
+    \end{minipage}
+    \caption{Resultado da PINN decomposta: (a) o campo de deslocamento, quase
+    homogêneo; (b) correlação com o MDF ($R^2 \approx 0{,}99$) --- o deslocamento
+    global é bem reproduzido, apesar da subestimação de $G_{ef}$.}
+    \label{fig:pinn}
+\end{figure}
+
 A Figura~\ref{fig:painel_w} compara o campo de deslocamento dos três métodos na
 mesma escala de cores.
 \begin{figure}[htbp]
@@ -887,9 +913,13 @@ mesma escala de cores.
 
 \subsection{Erros relativos em norma $L^2$}
 
-Tomando o MDF como referência (o que mede proximidade, não acurácia absoluta), os
-erros relativos em norma $L^2$ na malha $81{\times}81$ estão na
-Tabela~\ref{tab:erros}. No deslocamento, o MEF concorda com o MDF em $\sim10^{-3}$;
+Adota-se o \textbf{MDF como referência} de comparação por dois motivos: ele foi
+validado contra a solução analítica (Seção~\ref{sec:validacao}) e concorda quase
+exatamente com o MEF, sendo portanto a referência numérica mais confiável de que se
+dispõe para avaliar a PINN --- o método sob escrutínio. Note-se, contudo, que
+comparar contra o MDF mede \emph{proximidade}, e não acurácia absoluta.
+Tomando-o como referência, os erros relativos em norma $L^2$ na malha
+$81{\times}81$ estão na Tabela~\ref{tab:erros}. No deslocamento, o MEF concorda com o MDF em $\sim10^{-3}$;
 já nas \emph{tensões}, mesmo MDF e MEF divergem de forma expressiva
 ($\tau_{xz}\approx 1{,}1\times10^{-1}$, $\tau_{yz}\approx 2{,}8\times10^{-1}$), pois
 são dominadas por artefatos numéricos junto à interface e às quinas. A PINN

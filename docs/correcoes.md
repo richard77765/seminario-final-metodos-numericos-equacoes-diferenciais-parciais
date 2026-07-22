@@ -6,6 +6,7 @@ alterações e conformidade de template.
 **Última atualização:** 2026-07-21.
 
 Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda execução)
+· 📝 documentado em [`paper/CORRECOES_LATEX.md`](../paper/CORRECOES_LATEX.md) (aplicar no Overleaf)
 
 ---
 
@@ -101,12 +102,13 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Essencial | 🧭 PINN multi-seed (5–10) média±desvio + custo | `scripts/pinn_seeds.py` (GPU) | 2.4 |
 | Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |
-| Texto | Reescrever abstract/conclusão (moderar "convergência", "MEF superior") | `paper/` | 3.1, 2.5 |
-| Texto | Formulação: espaços `V₀`, levantamento Dirichlet, saltos de interface | `paper/` §3 | 3.3 |
-| Texto | Q4/Gauss no corpo do MEF; pós-proc. de tensões | `paper/` §5 | 3.5 |
-| Editorial | `comparasion`→`comparison`; `Kroenecker`→`Kronecker`; "capítulo"→"seção" | `paper/` | 5 |
-| Editorial | "Dados": repo versionado + DOI (Zenodo), no idioma do artigo | `paper/` | 3.8 |
-| Editorial | Bibliografia 7 → ~25–40 refs (interface/PINN) | `paper/.bib` | 5 |
+| Texto | 📝 Reescrever abstract/conclusão (moderar "convergência", "MEF superior") | CORRECOES_LATEX §2 | 3.1, 2.5 |
+| Texto | 📝 §7.1 validação + ordem ~1,5; §7.3 tensões 10⁻¹ | CORRECOES_LATEX §2 + tabelas §3 | 2.1, 2.5 |
+| Texto | 📝 Formulação: espaços `V₀`, levantamento Dirichlet, saltos de interface | CORRECOES_LATEX §4 | 3.3 |
+| Texto | ⏳ Q4/Gauss no corpo do MEF; pós-proc. de tensões | `paper/` §5 | 3.5 |
+| Editorial | 📝 `comparasion`→`comparison`; `Kroenecker`→`Kronecker`; "capítulo"→"seção" | CORRECOES_LATEX §1 | 5 |
+| Editorial | 📝 "Dados": repo versionado + DOI (Zenodo), no idioma do artigo | CORRECOES_LATEX §5 | 3.8 |
+| Editorial | ⏳ Bibliografia 7 → ~25–40 refs (interface/PINN) | `paper/.bib` | 5 |
 | Template | Converter TCAM.cls → template da REMAT | `paper/` | — |
 
 ---

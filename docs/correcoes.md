@@ -74,17 +74,32 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 3. **Sanidade Voigt–Reuss:** `f=(2a)²=0,09`, limites [1,0776 ; 1,3600]; `G_ef`
    dentro — confere a aritmética do parecer 2.2.
 
+4. **Ordens de convergência reais** (`scripts/convergence.py`):
+   - Circular (MDF, Dirichlet exato) vs analítica: **ordem ~1,5** (não 2).
+   - Quadrada, auto-convergência em `w`: **MDF ~0,9** (1ª ordem) e **MEF ~1,7**.
+   - Quadrada, `τ_xz` (MDF): **ordem ~0,5** — a tensão converge muito devagar por
+     causa da singularidade de quina (parecer 2.3).
+   - Nuance para §7.3/Conclusão: MEF converge mais rápido em `w`, mas isso **não**
+     é o mesmo que "capturar melhor as tensões de interface" — afirmar só o que
+     foi medido.
+
+5. **Paramétrico `Gᵢ/Gₘ`** (`scripts/parametric.py`): `G_ef` = 1,00 → 1,54
+   (ratios 1..100), **cresce e desacelera** (dizer "satura" é forte para ratio 100).
+   `max|τ|` cresce ~100× mas `p99` só ~15× e `max_far` ~47× → o pico pontual é
+   dominado pela quina, confirmando 2.3.
+
 ---
 
 ## 4. A fazer (roadmap de execução)
 
 | Prioridade | Tarefa | Entrega | Parecer |
 |---|---|---|---|
-| Essencial | Tabela de convergência (circular **e** quadrada) | `scripts/convergence.py` + CSV | 2.1, 3.4, 3.7 |
-| Essencial | Tabela de erros L² (w, τ_xz, τ_yz) MEF×MDF | `outputs/tables/` | 2.2, 3.7 |
-| Essencial | Métricas de interface (salto de `w`, erro de fluxo normal) | script + tabela | 2.3, 3.3 |
-| Essencial | PINN multi-seed (5–10) média±desvio + custo | `scripts/pinn_seeds.py` (GPU) | 2.4 |
-| Forte | Estudo paramétrico `Gᵢ/Gₘ` com figura+tabela | `scripts/parametric.py` | 3.7 |
+| Essencial | ✅ Convergência (circular **e** quadrada, MDF+MEF) | `scripts/convergence.py` + CSVs | 2.1, 3.4, 3.7 |
+| Essencial | ✅ Tabela de erros L² (w, τ_xz, τ_yz) MEF×MDF | `scripts/comparison.py` + CSV | 2.2, 3.7 |
+| Essencial | ✅ Métricas de tensão robustas (max, p99, max_far, L²) | `robust_stress_metrics` | 2.3 |
+| Essencial | ⏳ Erro de fluxo normal na interface | script + tabela | 2.3, 3.3 |
+| Essencial | 🧭 PINN multi-seed (5–10) média±desvio + custo | `scripts/pinn_seeds.py` (GPU) | 2.4 |
+| Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |
 | Texto | Reescrever abstract/conclusão (moderar "convergência", "MEF superior") | `paper/` | 3.1, 2.5 |
 | Texto | Formulação: espaços `V₀`, levantamento Dirichlet, saltos de interface | `paper/` §3 | 3.3 |

@@ -44,3 +44,34 @@ def field_errors(sol, ref, mask=None):
         "txz": rel_l2(sol["txz"], ref["txz"], mask),
         "tyz": rel_l2(sol["tyz"], ref["tyz"], mask),
     }
+
+
+def robust_stress_metrics(sol, case=None, delta=0.05):
+    """Metricas ROBUSTAS de tensao (parecer 2.3).
+
+    A inclusao quadrada gera concentracao/singularidade nas quinas, entao
+    ``max|tau|`` cresce com o refino da malha e NAO e uma metrica confiavel.
+    Retorna, para |tau| = sqrt(txz^2 + tyz^2):
+
+      max      : maximo pontual (sensivel a quina, so para referencia)
+      p99      : percentil 99% (pouco sensivel a um unico ponto)
+      max_far  : maximo FORA de uma vizinhanca de raio ``delta`` das 4 quinas
+      l2       : norma L2 de |tau| sobre o dominio
+
+    ``max_far`` e ``p99`` sao as recomendadas para comparar metodos/contraste.
+    """
+    case = case or sol["case"]
+    mag = np.hypot(sol["txz"], sol["tyz"])
+    X, Y = sol["X"], sol["Y"]
+    cx, cy = case.center
+    a = case.a
+    far = np.ones_like(mag, dtype=bool)
+    for xc, yc in [(cx - a, cy - a), (cx + a, cy - a),
+                   (cx + a, cy + a), (cx - a, cy + a)]:
+        far &= np.hypot(X - xc, Y - yc) > delta
+    return {
+        "max": float(mag.max()),
+        "p99": float(np.percentile(mag, 99)),
+        "max_far": float(mag[far].max()) if far.any() else float("nan"),
+        "l2": float(np.sqrt(np.mean(mag ** 2))),
+    }

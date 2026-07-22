@@ -8,6 +8,7 @@ venv/
 # Artefatos gerados (reproduzíveis via scripts/)
 outputs/figures/*.png
 outputs/figures/*.pdf
+outputs/*.npz
 
 # LaTeX (auxiliares)
 paper/*.aux

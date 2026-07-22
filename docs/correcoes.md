@@ -17,7 +17,7 @@ Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda
 | 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código corrigido; ⏳ texto §7.1 |
 | 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | ✅ verificado; ⏳ definição operacional no texto |
 | 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | ⏳ trocar por L²/percentil/erro de fluxo |
-| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 script pronto, rodando (CPU, 5 sementes×4000) |
+| 2.4 | PINN com 1 semente; sem custo computacional | Alto | ✅ rodado (CPU): G_ef 0,982±0,002 (abaixo de Reuss); ~15 min |
 | 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência levantada; ⏳ reescrever afirmações |
 | 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | ⏳ ver seções abaixo |
 
@@ -89,6 +89,16 @@ Rodando os solvers reais (não estavam tabulados no artigo):
    `max|τ|` cresce ~100× mas `p99` só ~15× e `max_far` ~47× → o pico pontual é
    dominado pela quina, confirmando 2.3.
 
+6. **PINN multi-seed** (`scripts/pinn_seeds.py`, 5 sementes × 4000 épocas, CPU,
+   ~15 min): `G_ef` = **0,982 ± 0,002** (a semente 42, a do artigo, dá **0,981**).
+   **Contradiz a Tabela `tab:gef`**, que reporta PINN ≈ 1,14. Pior: 0,98 fica
+   **abaixo do limite de Reuss (1,078)** → estimativa fisicamente inconsistente.
+   Erros vs MDF: `w` 4,3% ± 0,1%, `τxz` 30%, `τyz` 99%. Variância entre sementes é
+   mínima → **viés sistemático**, não instabilidade: o painel de `w` mostra a PINN
+   quase ignorando a inclusão (isolinhas quase verticais, campo ≈ homogêneo `γx`).
+   Reforça a conclusão qualitativa (PINN sofre na interface), mas **derruba o "os
+   três concordam em 1,14"**.
+
 ---
 
 ## 4. A fazer (roadmap de execução)
@@ -99,7 +109,7 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Essencial | ✅ Tabela de erros L² (w, τ_xz, τ_yz) MEF×MDF | `scripts/comparison.py` + CSV | 2.2, 3.7 |
 | Essencial | ✅ Métricas de tensão robustas (max, p99, max_far, L²) | `robust_stress_metrics` | 2.3 |
 | Essencial | ⏳ Erro de fluxo normal na interface | script + tabela | 2.3, 3.3 |
-| Essencial | 🔧 PINN multi-seed (5–10) média±desvio + custo (rodando em CPU) | `scripts/pinn_seeds.py` | 2.4 |
+| Essencial | ✅ PINN multi-seed (5 sementes, CPU): G_ef 0,982±0,002, ~15 min | `scripts/pinn_seeds.py` + CSV | 2.4 |
 | Forte | ✅ Figuras do artigo (campos, convergência, paramétrico) | `scripts/make_figures.py` | 3.7 |
 | Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |

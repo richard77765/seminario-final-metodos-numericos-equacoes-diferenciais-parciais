@@ -32,7 +32,7 @@ por
 > Os resultados indicam uma convergência consistente entre os três métodos na estimativa do módulo de cisalhamento. No entanto, a análise revelou que o MEF apresenta precisão superior na captura das tensões de interface.
 
 **Depois (sugestão):**
-> Os resultados indicam **boa concordância** entre os três métodos na estimativa do **módulo de cisalhamento efetivo** — uma quantidade de caráter integral ($G_{ef}\approx 1{,}14$). A análise de convergência mostra que o MEF atinge **ordem mais alta no deslocamento** ($\approx 1{,}7$ contra $\approx 0{,}9$ do MDF na inclusão quadrada), ao passo que as **tensões** — dominadas pela singularidade das quinas — convergem mais lentamente em todos os métodos.
+> Os resultados mostram que **MDF e MEF concordam** no **módulo de cisalhamento efetivo** ($G_{ef}\approx 1{,}14$), ao passo que a **PINN o subestima** ($\approx 0{,}98$, abaixo do limite inferior de Reuss). A análise de convergência indica que o MEF atinge **ordem mais alta no deslocamento** ($\approx 1{,}7$ contra $\approx 0{,}9$ do MDF na inclusão quadrada), enquanto as **tensões** — dominadas pela singularidade das quinas — convergem mais lentamente em todos os métodos.
 
 *(Espelhar no abstract EN: "consistent convergence" → "good agreement"; "superior accuracy in capturing interface stresses" → "higher convergence order in the displacement".)*
 
@@ -58,6 +58,22 @@ por
 **Antes:** `...satura para razões elevadas...`
 **Real:** de $G_i/G_m=50$ para $100$, $G_{ef}$ ainda cresce $1{,}36\to1{,}54$.
 **Depois:** `...cresce monotonicamente e desacelera (tendência à saturação) para contrastes elevados...`
+
+### 2.5 Tabela `tab:gef` / §5.4 — G_ef da PINN não é 1,14 (CRÍTICO, novo)
+**Antes:** a Tabela `tab:gef` lista **PINN $\approx 1{,}14$** (igual a MDF/MEF), e a
+conclusão diz que "os três métodos convergem para a mesma propriedade".
+**Real (5 sementes × 4000 épocas, CPU):** $G_{ef}^{\text{PINN}} = 0{,}982 \pm 0{,}002$
+— a própria **semente 42** (a do artigo) dá $0{,}981$. **Não reproduz 1,14** e fica
+**abaixo do limite de Reuss** ($1{,}078$): fisicamente inconsistente. A variância
+mínima ($\pm 0{,}2\%$) mostra que é **viés sistemático**, não instabilidade — a PINN
+colapsa para a solução quase homogênea (isolinhas de $w$ quase verticais).
+**Depois (sugestão):**
+> Diferentemente do MDF e do MEF, a PINN decomposta **subestima** o módulo efetivo
+> ($G_{ef}=0{,}982\pm0{,}002$ em 5 sementes), valor que sequer respeita o limite
+> inferior de Reuss — evidenciando que, apesar de reproduzir o deslocamento global
+> com erro de $\sim4\%$, a rede não captura o reforço imposto pela inclusão.
+
+*(Corrigir a Tabela `tab:gef` e a Conclusão: os três **não** concordam em $G_{ef}$.)*
 
 ---
 
@@ -103,8 +119,23 @@ $G_i/G_m$ & $G_{ef}$ & $\max|\tau|$ & $p_{99}|\tau|$ & $\max_{\mathrm{far}}|\tau
 \end{table}
 ```
 
-Atualizar também a Tabela `tab:gef` com dígitos: MDF $=1{,}139769$, MEF $=1{,}139824$
-(a PINN entra após a rodada multi-seed, como média $\pm$ desvio).
+```latex
+% PINN decomposta vs MDF (5 sementes x 4000 epocas)
+\begin{table}[h]\centering
+\caption{PINN decomposta: módulo efetivo e erro $L^2$ vs MDF ($N=80$;
+média $\pm$ desvio em 5 sementes).}
+\begin{tabular}{lc}\hline
+Grandeza & média $\pm$ desvio\\\hline
+$G_{ef}$ & $0{,}982 \pm 0{,}002$ \ (Reuss $=1{,}078$)\\
+$e_{rel}(w)$ & $(4{,}3 \pm 0{,}1)\times10^{-2}$\\
+$e_{rel}(\tau_{xz})$ & $3{,}0\times10^{-1}$\\
+$e_{rel}(\tau_{yz})$ & $9{,}9\times10^{-1}$\\
+parâmetros treináveis & $19\,202$\\\hline
+\end{tabular}\end{table}
+```
+
+Atualizar a Tabela `tab:gef` com dígitos: MDF $=1{,}139769$, MEF $=1{,}139824$,
+**PINN $=0{,}982\pm0{,}002$** (5 sementes; abaixo de Reuss — ver §2.5).
 
 ---
 

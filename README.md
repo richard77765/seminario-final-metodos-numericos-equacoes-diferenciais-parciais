@@ -59,14 +59,17 @@ Caso oficial, malha `N=80` (`81×81` nós):
 |---|---|
 | `G_ef` (MDF) | **1,139769** |
 | `G_ef` (MEF) | **1,139824** |
-| Limites Voigt/Reuss | [1,0776 ; 1,3600] → `G_ef` consistente |
+| `G_ef` (PINN, 5 sementes) | **0,982 ± 0,002** ⚠️ abaixo de Reuss |
+| Limites Voigt/Reuss | [1,0776 ; 1,3600] → MDF/MEF consistentes; **PINN viola Reuss** |
 | Erro L² MEF×MDF — `w` | 3,4×10⁻³ |
 | Erro L² MEF×MDF — `τ_xz` | 1,1×10⁻¹ |
 | Erro L² MEF×MDF — `τ_yz` | 2,8×10⁻¹ |
 
 > ⚠️ Ao contrário do que a versão original do artigo afirmava (“erros 10⁻³ em
 > **todos** os campos”), MDF e MEF **divergem 10–30% nas tensões** — dominadas por
-> artefatos de interface. Ver [`docs/correcoes.md`](docs/correcoes.md).
+> artefatos de interface. E a **PINN dá `G_ef≈0,98` (não 1,14)**, abaixo do limite
+> de Reuss: as 5 sementes concordam entre si (viés sistemático, não instabilidade).
+> Ver [`docs/correcoes.md`](docs/correcoes.md).
 
 Validação (inclusão circular, `Gᵢ=10`), erro L² no interior `0.2 ≤ x,y ≤ 0.8`:
 

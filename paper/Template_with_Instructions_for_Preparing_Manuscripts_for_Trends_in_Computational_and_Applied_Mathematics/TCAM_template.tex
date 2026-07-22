@@ -18,6 +18,9 @@
 \usepackage{array}
 \usepackage{url}
 \usepackage{graphicx}
+% Procura figuras na pasta do .tex, na raiz do projeto e na pasta do template,
+% para funcionar independentemente de onde o arquivo principal esteja.
+\graphicspath{{./}{../}{Template_with_Instructions_for_Preparing_Manuscripts_for_Trends_in_Computational_and_Applied_Mathematics/}}
 \usepackage{subfigure}
 \usepackage{lineno} % to display line numbers
 \linenumbers
@@ -57,14 +60,14 @@ Finitas, Elementos Finitos e PINNs.}
 }
 %\aff{Affiliations should be omitted to ensure a double-blind review process. After review and acceptance, the final manuscript must include a full list of authors, affiliations with addresses, email, and mandatory ORCID.}, %
 %*********************************************************
-% Use this template to add author's names after the 
+% Use this template to add author's names after the
 % double-blind review process.
 %*********************************************************
 % Anonymous Second Author%
 % \aff{Department of Applied Mathematics and Statistics, ICMC, University of São Paulo, Av. Trabalhador São-carlense, 400, 13566-590, São Carlos, SP, Brazil -- E-mail: tcam@sbmac.org.br https://orcid.org/xxxx-xxxx-xxxx-xxxx} %
 %}
 
-\abstracttcam{Este trabalho apresenta um estudo comparativo entre três abordagens numéricas distintas — o Método de Diferenças Finitas (MDF), o Método de Elementos Finitos (MEF) e as Redes Neurais Informadas pela Física (PINNs) — aplicadas à análise de cisalhamento antiplano em um compósito bifásico com célula de inclusão. Os resultados indicam uma convergência consistente entre os três métodos na estimativa do módulo de cisalhamento. No entanto, a análise revelou que o MEF apresenta precisão superior na captura das tensões de interface. As PINNs, embora eficazes na representação do deslocamento global, demonstraram maior dificuldade em resolver as descontinuidades de gradiente nas quinas da inclusão. O estudo conclui que, enquanto os métodos de discretização clássicos permanecem mais precisos para problemas determinísticos de interface, as PINNs oferecem um paradigma flexível e livre de malha para a homogeneização computacional.}
+\abstracttcam{Este trabalho apresenta um estudo comparativo entre três abordagens numéricas distintas — o Método de Diferenças Finitas (MDF), o Método de Elementos Finitos (MEF) e as Redes Neurais Informadas pela Física (PINNs) — aplicadas à análise de cisalhamento antiplano em um compósito bifásico com célula de inclusão. Os resultados mostram boa concordância entre o MDF e o MEF na estimativa do módulo de cisalhamento efetivo ($G_{ef}\approx 1{,}14$), ao passo que a PINN o subestima ($\approx 0{,}98$, abaixo do limite inferior de Reuss). A análise revelou ainda que, mesmo entre MDF e MEF, as tensões junto à interface divergem de forma expressiva. As PINNs, embora eficazes na representação do deslocamento global, demonstraram maior dificuldade em resolver as descontinuidades de gradiente nas quinas da inclusão. O estudo conclui que, enquanto os métodos de discretização clássicos permanecem mais precisos para problemas determinísticos de interface, as PINNs oferecem um paradigma flexível e livre de malha para a homogeneização computacional.}
 
 \keywords{Cisalhamento antiplano, Diferenças Finitas, Elementos Finitos, PINN}
 
@@ -75,11 +78,11 @@ Finitas, Elementos Finitos e PINNs.}
 % INFORMATIONS IN ENGLISH - MANDATORY WHEN WRITING IN PORTUGUESE
 % CAN BE OMITTED WHEN WRITING THE MANUSCRIPT IN ENGLISH
 %
-\titleenglish{Antiplane Shear in a two-phase composite: comparasion between Finite Differences, Finite Elements and PINNs}
+\titleenglish{Antiplane Shear in a two-phase composite: comparison between Finite Differences, Finite Elements and PINNs}
 
-\abstracttcamenglish{This paper presents a comparative study of three distinct numerical approaches—the Finite Difference Method (FDM), the Finite Element Method (FEM), and Physics-Informed Neural Networks (PINNs)—applied to the analysis of anti-plane shear in a two-phase composite with an inclusion cell. The results indicate consistent convergence among the three methods in estimating the shear modulus. However, the analysis revealed that the FEM offers superior accuracy in capturing interface stresses. While effective at representing global displacement, PINNs demonstrated greater difficulty in resolving gradient discontinuities at the inclusion corners. The study concludes that, although classical discretization methods remain more accurate for deterministic interface problems, PINNs offer a flexible, mesh-free paradigm for computational homogenization.}
+\abstracttcamenglish{This paper presents a comparative study of three distinct numerical approaches—the Finite Difference Method (FDM), the Finite Element Method (FEM), and Physics-Informed Neural Networks (PINNs)—applied to the analysis of anti-plane shear in a two-phase composite with an inclusion cell. The results show good agreement between FDM and FEM in estimating the effective shear modulus ($G_{ef}\approx 1.14$), whereas the PINN underestimates it ($\approx 0.98$, below the Reuss lower bound). The analysis further revealed that, even between FDM and FEM, the interface stresses differ significantly. While effective at representing global displacement, PINNs demonstrated greater difficulty in resolving gradient discontinuities at the inclusion corners. The study concludes that, although classical discretization methods remain more accurate for deterministic interface problems, PINNs offer a flexible, mesh-free paradigm for computational homogenization.}
 
-\keywordsenglish{Antiplane Shear, Finite-Difference Method, Finite-Elements Method, PINN }
+\keywordsenglish{Antiplane Shear, Finite Difference Method, Finite Element Method, PINN}
 
 %***************************************************************
 
@@ -97,7 +100,7 @@ Finitas, Elementos Finitos e PINNs.}
 Diversos materiais compósitos apresentam uma célula de inclusão onde se torna necessário conhecer as regiões de concentração de tensão e possíveis pontos de falha. Podemos ver aplicações desses materiais em biomateriais, cerâmicas, concretos e materiais porosos.
 A formulação antiplana reduz o problema tridimensional a um problema bidimensional preservando aspectos físicos essenciais.
 
-Neste trabalho, faremos uma comparação das soluções obtidas pelos métodos de Diferenças Finitas, Elementos Finitos e a solução obtida através da PINN. Em Diferenças Finitas, as derivadas parciais podem ser expressas através de combinação linear de seus nós vizinhos resultando em um sistema de equações lineares ao final \cite{lin2021simulation}\cite{leveque2007}. Em Elementos Finitos, usa-se a formulação clássica aplicando o método de resíduos ponderados para encontrar a formulação fraca e o método de Galerkin para as funções de interpolação resultando também em um sistema linear \cite{logan}. Já na simulação obtida com uso da PINN,tem-se uma abordagem de aprendizado profundo que integra as leis da física diretamente na função de perda da rede neural.
+Neste trabalho, faremos uma comparação das soluções obtidas pelos métodos de Diferenças Finitas, Elementos Finitos e a solução obtida através da PINN. Em Diferenças Finitas, as derivadas parciais podem ser expressas através de combinação linear de seus nós vizinhos resultando em um sistema de equações lineares ao final \cite{lin2021simulation}\cite{leveque2007}. Em Elementos Finitos, usa-se a formulação clássica aplicando o método de resíduos ponderados para encontrar a formulação fraca e o método de Galerkin para as funções de interpolação resultando também em um sistema linear \cite{logan}. Já na simulação obtida com uso da PINN, tem-se uma abordagem de aprendizado profundo que integra as leis da física diretamente na função de perda da rede neural \cite{raissi2019pinn,karniadakis2021physics,lu2021deepxde}.
 
 O objetivo principal é avaliar a eficácia de cada método na captura dos campos locais e na estimativa do módulo de cisalhamento efetivo do compósito, confrontando a eficiência das discretizações clássicas com a flexibilidade da inteligência artificial informada pela física
 
@@ -108,21 +111,21 @@ O problema de cisalhamento antiplano descreve o comportamento mecânico de um co
 
 Nessa configuração, as únicas componentes não nulas de tensão são as de cisalhamento associadas aos planos $xz$ e $yz$, denotadas por $\tau_{xz}$ e $\tau_{yz}$. Na ausência de forças de corpo, o equilíbrio mecânico exige que a divergência do campo de tensões seja nula, o que conduz diretamente à equação governante apresentada na seção seguinte.
 
-O corpo considerado é um material compósito bifásico, representado por uma célula representativa composta por uma matriz que envolve uma inclusão central. A matriz e a inclusão possuem módulos de cisalhamento distintos, $G_m$ e $G_i$, de modo que a propriedade material $G(x,y)$ é descontínua através da interface entre as duas fases. Essa descontinuidade é a principal fonte de complexidade física do problema: na interface, exige-se simultaneamente a continuidade do deslocamento $w$ e o equilíbrio do fluxo de tensão normal, $G\,\partial w/\partial n$, enquanto o gradiente do deslocamento sofre um salto. Como consequência, surgem concentrações de tensão, particularmente acentuadas nas quinas da inclusão, regiões frequentemente associadas ao início de falhas em materiais reais.
+O corpo considerado é um material compósito bifásico, representado por uma célula representativa composta por uma matriz que envolve uma inclusão central. A matriz e a inclusão possuem módulos de cisalhamento distintos, $G_m$ e $G_i$, de modo que a propriedade material $G(x,y)$ é descontínua através da interface entre as duas fases. Essa descontinuidade é a principal fonte de complexidade física do problema: na interface, exige-se simultaneamente a continuidade do deslocamento $w$ e o equilíbrio do fluxo de tensão normal, $G\,\partial w/\partial n$, enquanto o gradiente do deslocamento sofre um salto. Como consequência, surgem concentrações de tensão, particularmente acentuadas nas quinas da inclusão, regiões frequentemente associadas ao início de falhas em materiais reais \cite{kohno1995singularities}.
 
-Ao corpo impõe-se um cisalhamento macroscópico simples, que induz um campo de deslocamento médio através da célula. O interesse prático é duplo: por um lado, deseja-se conhecer os campos locais de tensão, identificando as regiões de concentração e os possíveis pontos de falha; por outro, busca-se estimar o módulo de cisalhamento efetivo $G_{ef}$ do compósito, isto é, a propriedade homogeneizada que descreve o comportamento médio do material heterogêneo como se fosse um meio equivalente. Esse procedimento de obtenção de propriedades efetivas a partir da microestrutura é o objeto da homogeneização computacional \cite{geers2010multiscale} e constitui o elo entre a descrição microscópica da célula e o comportamento macroscópico do compósito em aplicações como biomateriais, cerâmicas, concretos e materiais porosos.
+Ao corpo impõe-se um cisalhamento macroscópico simples, que induz um campo de deslocamento médio através da célula. O interesse prático é duplo: por um lado, deseja-se conhecer os campos locais de tensão, identificando as regiões de concentração e os possíveis pontos de falha; por outro, busca-se estimar o módulo de cisalhamento efetivo $G_{ef}$ do compósito, isto é, a propriedade homogeneizada que descreve o comportamento médio do material heterogêneo como se fosse um meio equivalente. Esse procedimento de obtenção de propriedades efetivas a partir da microestrutura é o objeto da homogeneização computacional \cite{geers2010multiscale,torquato2002random,moulinec1998numerical} e constitui o elo entre a descrição microscópica da célula e o comportamento macroscópico do compósito em aplicações como biomateriais, cerâmicas, concretos e materiais porosos.
 
 
 \section{Formulação Matemática}
-Nesse capítulo, iremos abordar a modelagem matemática do problema tratado.
-Dada uma célula representativa de um material compósito. Considere a matriz que possui módulo de cisalhamento $G_m$ enquanto uma inclusão central possui módulo de cisalhamento $G_i$. 
+Nesta seção, aborda-se a modelagem matemática do problema tratado.
+Dada uma célula representativa de um material compósito. Considere a matriz que possui módulo de cisalhamento $G_m$ enquanto uma inclusão central possui módulo de cisalhamento $G_i$.
 
-Considere o domínio quadrado: 
+Considere o domínio quadrado:
 \begin{equation*}
     \Omega = [0,L] \times [0,L]
 \end{equation*}
 
-No centro do domínio há uma inclusão quadrada definida por: 
+No centro do domínio há uma inclusão quadrada definida por:
 \begin{equation*}
     \Omega_i = \Big[\dfrac{L}{2}-a, \dfrac{L}{2}+a\Big] \times \Big[\dfrac{L}{2}-a, \dfrac{L}{2}+a\Big]
 \end{equation*}
@@ -141,7 +144,7 @@ G_m, & (x,y)\in\Omega_m.
 \end{cases}
 \end{equation*}
 
-Iremos utilizar para os cálculos numéricos os valores de:
+Para os cálculos numéricos utilizam-se os valores:
 
 \begin{equation*}
     L = 1,
@@ -163,7 +166,7 @@ O deslocamento antiplano é representado por $w(x,y)$. A equação de equilíbri
 \label{eq}
 \end{equation}
 
-As tensões de cisalhamento são: 
+As tensões de cisalhamento são:
 
 \[
 \tau_{xz}
@@ -176,6 +179,18 @@ G(x,y)\frac{\partial w}{\partial x},
 =
 G(x,y)\frac{\partial w}{\partial y}.
 \]
+
+Na interface $\Gamma=\partial\Omega_i$ entre as duas fases, exigem-se a
+continuidade do deslocamento e o equilíbrio do fluxo de tensão normal:
+\begin{equation}
+    [\![ w ]\!] = 0,
+    \qquad
+    [\![ G\,\partial_n w ]\!] = 0,
+    \label{eq:interface}
+\end{equation}
+onde $[\![\cdot]\!]$ denota o salto através de $\Gamma$ e
+$\partial_n = \mathbf{n}\cdot\nabla$ a derivada normal. O gradiente de $w$ é, em
+geral, descontínuo através de $\Gamma$.
 
 \subsection{Condições de Contorno}
 
@@ -199,7 +214,7 @@ Neste caso, temos também condição de contorno de Neumann.
 \section{Método de diferenças finitas}
 
 Considere a equação governante do problema de cisalhamento antiplano apresentada em \eqref{eq}.
-Expandindo a equação, teremos: 
+Expandindo a equação, teremos:
 
 \begin{equation*}
 - \frac{\partial}{\partial x}
@@ -220,7 +235,7 @@ O domínio é discretizado por uma malha uniforme de espaçamento $h$,
 contendo $n$ nós em cada direção. Os nós da malha são identificados
 pelos índices $i,j=0,\ldots,n$.
 
-Para preservar adequadamente os fluxos nas interfaces entre materiais distintos, os coeficientes são avaliados nos pontos médios entre nós. 
+Para preservar adequadamente os fluxos nas interfaces entre materiais distintos, os coeficientes são avaliados nos pontos médios entre nós.
 A discretização é realizada na forma conservativa, aproximando inicialmente as tensões de cisalhamento nas interfaces entre os volumes de controle e, em seguida, aproximando a divergência dessas tensões por diferenças centrais.
 
 \subsection{Discretização da Equação Governante}
@@ -296,7 +311,8 @@ montagem do sistema linear associado ao problema.
 
 A utilização da média harmônica permite representar adequadamente a
 transição entre materiais com propriedades distintas, preservando a
-continuidade do fluxo de tensões através da interface. Portanto tem-se que:
+continuidade do fluxo de tensões através da interface \cite{beale2006accuracy}.
+Portanto tem-se que:
 \begin{equation}
      G_{i+\frac12,j}= \dfrac{2G_{i,j}G_{i+1,j}}{G_{i,j}+G_{i+1,j}}
 \end{equation}
@@ -335,7 +351,7 @@ segue que
 
 nas fronteiras superior e inferior.
 
-Para discretizar essa condição mantendo a ordem de precisão do esquema, utiliza-se uma aproximação por diferenças centrais. 
+Para discretizar essa condição mantendo a ordem de precisão do esquema, utiliza-se uma aproximação por diferenças centrais.
 Na fronteira inferior $(j=0)$, utilizando diferenças centrais e introduzindo um nó fantasma, obtém-se
 
 \begin{equation*}
@@ -377,12 +393,13 @@ as contribuições das condições de contorno.
 Cada linha da matriz $A$ corresponde à equação discreta associada a um
 nó da malha. Devido ao stencil de cinco pontos empregado, a matriz
 resultante é esparsa, contendo coeficientes apenas para os vizinhos
-imediatos de cada nó.
+imediatos de cada nó, o que favorece o emprego de métodos para sistemas
+lineares esparsos \cite{saad2003iterative}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Método de elementos finitos}
 
-Baseando-se no método de resíduos ponderados e aplicando a formulação que vemos em \cite{logan}, multiplicamos a equação por uma função teste $v$ e aplica-se a integração no domínio, tal que:
+Baseando-se no método de resíduos ponderados e aplicando a formulação que vemos em \cite{logan,hughes2000finite}, multiplicamos a equação por uma função teste $v$ e aplica-se a integração no domínio, tal que:
 
 \begin{equation*}
 \int_{\Omega} v \, \nabla \cdot (G \nabla w)\, d\Omega = 0.
@@ -431,7 +448,7 @@ N_i(x,y)\, w_i.
 \label{eq:aprox_w}
 \end{equation}
 
- Adotando o método de Galerkin, a função teste é interpolada utilizando as mesmas funções de forma. 
+ Adotando o método de Galerkin, a função teste é interpolada utilizando as mesmas funções de forma.
 \begin{equation}
 v(x,y)
 =
@@ -440,7 +457,7 @@ N_i(x,y)\, v_i.
 \label{eq:aprox_v}
 \end{equation}
 
-As funções $N_i$ são escolhidas de forma que $N_i(x_j,y_j)=\delta_{ij}$, sendo $\delta$ a função delta de Kroenecker. 
+As funções $N_i$ são escolhidas de forma que $N_i(x_j,y_j)=\delta_{ij}$, sendo $\delta$ a função delta de Kronecker.
 
 Substituindo as Equações \eqref{eq:aprox_w} e \eqref{eq:aprox_v}
 em \eqref{eq:forma_fraca}, teremos:
@@ -510,11 +527,12 @@ As \textit{Physics-Informed Neural Networks} (PINNs) constituem uma abordagem em
 que uma rede neural $\mathcal{N}_\theta(x,y)$ aproxima diretamente o campo de
 deslocamento $w(x,y)$, ajustando seus parâmetros $\theta$ de forma a minimizar o
 resíduo da equação diferencial parcial governante e das condições de contorno. A principal vantagem é a ausência de malha: as derivadas
-são obtidas por diferenciação automática (\textit{autograd}), o que as torna exatas
-no sentido computacional.
+são obtidas por diferenciação automática (\textit{autograd}), exatas para a função
+representada pela rede (até erro de ponto flutuante) --- e não para a solução física
+do problema.
 
 Como $G(x,y)$ é descontínuo na interface $\partial\Omega_i$, uma única rede
-apresenta dificuldades em capturar o salto de gradiente. Contudo, $G$ é constante
+apresenta dificuldades em capturar o salto de gradiente \cite{wu2023convergence,tseng2023cusp}. Contudo, $G$ é constante
 dentro de cada subdomínio; portanto, a equação \eqref{eq} se reduz à equação de
 Laplace em cada fase:
 \begin{equation}
@@ -522,7 +540,7 @@ Laplace em cada fase:
 \end{equation}
 
 Toda a física não-trivial fica concentrada na interface $\partial\Omega_i$. Adota-se
-então a estratégia de \textit{domínio decomposto}: duas redes independentes,
+então a estratégia de \textit{domínio decomposto} \cite{jagtap2020extended}: duas redes independentes,
 \begin{equation*}
     \mathcal{N}_m^{\theta_m}(x,y) \approx w\big|_{\Omega_m}, \qquad
     \mathcal{N}_i^{\theta_i}(x,y) \approx w\big|_{\Omega_i},
@@ -532,7 +550,7 @@ acopladas pelas condições de interface.
 Cada rede é um perceptron multicamadas (MLP) com:
 \begin{itemize}
     \item 5 camadas ocultas de 48 neurônios cada;
-    \item função de ativação $\tanh$; 
+    \item função de ativação $\tanh$;
     \item camada de saída linear com 1 neurônio;
     \item entrada $(x,y)$ normalizada para $[-1,1]^2$ via
           $\boldsymbol{\xi} = 2(x,y)/L - 1$.
@@ -680,14 +698,48 @@ com $G_i = 10$. A solução exata em coordenadas polares centradas na inclusão 
         & r \ge a,
     \end{cases}
 \end{equation*}
-onde $c_x = L/2$ é a coordenada $x$ do centro. O MDF com $N = 120$
-($121{\times}121$ nós) produziu um erro relativo em norma $L^2$ inferior a $1\%$
-no interior do domínio ($0{,}2 \le x, y \le 0{,}8$), confirmando a correta
-implementação.
+onde $c_x = L/2$ é a coordenada $x$ do centro. Essa solução, contudo, corresponde a
+um meio infinito e \emph{não} satisfaz as condições de contorno do domínio finito
+($w(0,y)=0$, $w(L,y)=\gamma L$): compará-la impondo as condições mistas mede a
+diferença entre dois problemas distintos e o erro estagna com o refino da malha.
+Para uma validação consistente, impõem-se no contorno do quadrado os \emph{valores
+exatos} da solução circular (Dirichlet em todo $\partial\Omega$), de modo que o
+problema numérico resolva o mesmo problema de valor de contorno da referência.
 
-Um estudo de convergência foi realizado com $N \in \{20, 40, 80, 160\}$.
-O erro relativo decresceu com ordem aproximadamente 2 em $N$, consistente com
-o esquema de diferenças centrais de segunda ordem empregado.
+Nessas condições, o estudo de convergência com $N \in \{20, 40, 80, 160\}$
+(Tabela~\ref{tab:conv}) mostra o erro relativo em norma $L^2$ no interior
+($0{,}2 \le x,y \le 0{,}8$) decrescendo de $9{,}8\times10^{-3}$ a
+$8{,}3\times10^{-4}$, com ordem aproximadamente $1{,}5$ --- inferior à segunda ordem
+do esquema por causa da representação em escada da interface circular na malha
+cartesiana.
+
+\begin{table}[h]
+\centering
+\caption{Convergência do erro relativo $L^2$ em $w$. Circular: MDF com Dirichlet
+exato da analítica (erro no interior); quadrada: auto-convergência contra malha
+fina do próprio método.}
+\label{tab:conv}
+\begin{tabular}{lcccc}
+\hline
+ & \multicolumn{2}{c}{Circular (MDF)} & \multicolumn{2}{c}{Quadrada} \\
+$N$ & $e_{rel}$ & ordem & MDF & MEF \\
+\hline
+20  & $9{,}83\times10^{-3}$ & ---      & $1{,}27\times10^{-2}$ & $4{,}43\times10^{-4}$ \\
+40  & $3{,}44\times10^{-3}$ & $1{,}51$ & $6{,}64\times10^{-3}$ & $1{,}57\times10^{-4}$ \\
+80  & $2{,}50\times10^{-3}$ & $0{,}46$ & $3{,}57\times10^{-3}$ & $4{,}33\times10^{-5}$ \\
+160 & $8{,}34\times10^{-4}$ & $1{,}58$ & ---                   & ---                   \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{fig_convergencia.png}
+    \caption{Convergência do erro relativo $L^2$ em $w$ (escala log--log). Os dados
+    situam-se entre as ordens 1 e 2: o MEF na inclusão quadrada é o mais íngreme
+    ($\approx 1{,}7$), enquanto o MDF fica próximo da primeira ordem.}
+    \label{fig:conv}
+\end{figure}
 
 \subsection{Módulo efetivo e comparação entre métodos}
 
@@ -698,22 +750,28 @@ concordantes, como apresentado na Tabela~\ref{tab:gef}.
 \begin{table}[h]
 \centering
 \caption{Módulo de cisalhamento efetivo $G_{ef} = \langle\tau_{xz}\rangle/\gamma$
-         obtido por cada método ($N=80$).}
+         ($N=80$). Limites de Voigt--Reuss: $[1{,}078;\,1{,}360]$. A PINN é a média
+         $\pm$ desvio de cinco sementes.}
 \label{tab:gef}
 \begin{tabular}{lc}
 \hline
 \textbf{Método} & $G_{ef}$ \\
 \hline
-MDF              & $\approx 1{,}14$ \\
-MEF              & $\approx 1{,}14$ \\
-PINN (decomposta) & $\approx 1{,}14$ \\
+MDF               & $1{,}1398$ \\
+MEF               & $1{,}1398$ \\
+PINN (decomposta) & $0{,}982 \pm 0{,}002$ \\
 \hline
 \end{tabular}
 \end{table}
 
-A concordância entre MDF e MEF é praticamente exata. A PINN reproduz o mesmo
-valor com desvios da ordem de poucos pontos percentuais nas tensões, sobretudo
-próximo aos cantos da inclusão, onde o gradiente é mais acentuado.
+A concordância entre MDF e MEF é praticamente exata e situa-se dentro dos limites de
+Voigt--Reuss. A PINN, por outro lado, \emph{subestima} o módulo efetivo
+($G_{ef}=0{,}982\pm0{,}002$ em cinco sementes, incluindo a semente $42$), valor que
+sequer respeita o limite inferior de Reuss ($1{,}078$): embora reproduza o
+deslocamento global com erro de $\sim 4\%$, a rede colapsa para um campo
+praticamente homogêneo, não capturando o reforço imposto pela inclusão. A variância
+mínima entre sementes ($\pm 0{,}2\%$) indica viés sistemático, e não instabilidade do
+treinamento.
 
 O resultado apresentado na Figura \ref{fig:comparacao_mdf}, representa a solução obtida através do Método de Diferenças Finitas.
 
@@ -722,7 +780,7 @@ O resultado apresentado na Figura \ref{fig:comparacao_mdf}, representa a soluç�
 
     \begin{minipage}{0.47\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{Template_with_Instructions_for_Preparing_Manuscripts_for_Trends_in_Computational_and_Applied_Mathematics/mdf.png}
+        \includegraphics[width=\linewidth]{mdf.png}
         \caption*{(a)}
     \end{minipage}
     \hfill
@@ -745,50 +803,114 @@ Já para a simulação obtida através do Método de Elementos Finitos, os resul
     \label{fig:mef}
 \end{figure}
 
+A Figura~\ref{fig:painel_w} compara o campo de deslocamento dos três métodos na
+mesma escala de cores.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{fig_painel_w.png}
+    \caption{Campo de deslocamento $w$ pelos três métodos, na mesma escala de cores.
+    MDF e MEF curvam as isolinhas em torno da inclusão; a PINN quase não as deflete,
+    aproximando-se do campo homogêneo --- reflexo da subestimação de $G_{ef}$.}
+    \label{fig:painel_w}
+\end{figure}
+
 \subsection{Erros relativos em norma $L^2$}
 
-Tomando o MDF como referência, os erros relativos em norma $L^2$ para os campos
-$w$, $\tau_{xz}$ e $\tau_{yz}$ foram avaliados na malha $81{\times}81$.
-O MEF apresenta desvios da ordem de $10^{-3}$ ou menores em todos os campos.
-A PINN apresenta desvios maiores nas tensões (ordem $10^{-2}$ a $10^{-1}$),
-refletindo a dificuldade da rede em capturar descontinuidades de gradiente mesmo
-com a decomposição de domínio. Esses resultados são ilustrados na
-Figura~\ref{fig:erro}.
+Tomando o MDF como referência (o que mede proximidade, não acurácia absoluta), os
+erros relativos em norma $L^2$ na malha $81{\times}81$ estão na
+Tabela~\ref{tab:erros}. No deslocamento, o MEF concorda com o MDF em $\sim10^{-3}$;
+já nas \emph{tensões}, mesmo MDF e MEF divergem de forma expressiva
+($\tau_{xz}\approx 1{,}1\times10^{-1}$, $\tau_{yz}\approx 2{,}8\times10^{-1}$), pois
+são dominadas por artefatos numéricos junto à interface e às quinas. A PINN
+apresenta desvios ainda maiores ($\tau_{xz}\approx 30\%$, $\tau_{yz}\approx 99\%$),
+refletindo a dificuldade da rede em capturar descontinuidades de gradiente mesmo com
+a decomposição de domínio. Esses resultados são ilustrados na Figura~\ref{fig:erro}.
 
-A Figura \ref{fig:erro} mostra o erro relativo entre o Método de Elementos finitos e o resultado obtido pela PINN.
+\begin{table}[h]
+\centering
+\caption{Erro relativo em norma $L^2$ em relação ao MDF ($N=80$). A PINN é reportada
+como média $\pm$ desvio em cinco sementes.}
+\label{tab:erros}
+\begin{tabular}{lccc}
+\hline
+Método & $w$ & $\tau_{xz}$ & $\tau_{yz}$ \\
+\hline
+MEF  & $3{,}4\times10^{-3}$          & $1{,}1\times10^{-1}$ & $2{,}8\times10^{-1}$ \\
+PINN & $(4{,}3\pm0{,}1)\times10^{-2}$ & $3{,}0\times10^{-1}$ & $9{,}9\times10^{-1}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+A Figura~\ref{fig:erro} apresenta os erros relativos em norma $L^2$ do MEF e da PINN,
+ambos tomando o MDF como referência.
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{erro.png}
-    \caption{Erro relativo entre MEF e PINN.}
+    \includegraphics[width=0.6\linewidth]{erro.png}
+    \caption{Erros relativos em norma $L^2$ por método, tomando o MDF como
+    referência. As tensões ($\tau_{xz}$, $\tau_{yz}$) divergem muito mais que o
+    deslocamento $w$, e a PINN apresenta os maiores desvios.}
     \label{fig:erro}
 \end{figure}
 
 \subsection{Estudo paramétrico: razão de contraste $G_i/G_m$}
 
 Com o solver MDF ($N=80$), variou-se a razão de contraste
-$G_i/G_m \in \{1, 2, 5, 10, 50, 100\}$. O módulo efetivo $G_{ef}$ cresce
-monotonicamente com o contraste e satura para razões elevadas, enquanto o pico de
-tensão na interface $\max|\boldsymbol{\tau}|$ aumenta de forma expressiva ---
-comportamento fisicamente esperado para inclusões progressivamente mais rígidas.
+$G_i/G_m \in \{1, 2, 5, 10, 50, 100\}$ (Tabela~\ref{tab:param}). O módulo efetivo
+$G_{ef}$ cresce monotonicamente e desacelera (tendência à saturação) para razões
+elevadas, de $1{,}00$ a $1{,}54$. O pico pontual $\max|\boldsymbol{\tau}|$ aumenta
+cerca de $100\times$, mas o percentil $99\%$ apenas $\sim 15\times$: o máximo é
+dominado pela singularidade de quina e não constitui uma métrica robusta, razão pela
+qual se reportam também o $p_{99}$ e o máximo fora de uma vizinhança das quinas.
+
+\begin{table}[h]
+\centering
+\caption{Estudo de contraste $G_i/G_m$ (MDF, $N=80$): módulo efetivo e métricas de
+$|\tau|$ --- máximo, percentil $99\%$ e máximo fora de uma vizinhança das quinas.}
+\label{tab:param}
+\begin{tabular}{ccccc}
+\hline
+$G_i/G_m$ & $G_{ef}$ & $\max|\tau|$ & $p_{99}|\tau|$ & $\max_{\text{far}}|\tau|$ \\
+\hline
+1   & $1{,}0000$ & $0{,}0100$ & $0{,}0100$ & $0{,}0100$ \\
+2   & $1{,}0628$ & $0{,}0184$ & $0{,}0151$ & $0{,}0163$ \\
+5   & $1{,}1398$ & $0{,}0473$ & $0{,}0224$ & $0{,}0321$ \\
+10  & $1{,}1910$ & $0{,}0969$ & $0{,}0288$ & $0{,}0560$ \\
+50  & $1{,}3619$ & $0{,}4939$ & $0{,}0786$ & $0{,}2394$ \\
+100 & $1{,}5363$ & $0{,}9899$ & $0{,}1491$ & $0{,}4682$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{fig_parametrico.png}
+    \caption{Estudo de contraste $G_i/G_m$. À esquerda, $G_{ef}$ (cresce e
+    desacelera); à direita (escala log), as métricas de $|\tau|$: o máximo pontual
+    dispara enquanto o percentil $99\%$ cresce muito menos, mostrando que o pico é
+    dominado pela quina.}
+    \label{fig:param}
+\end{figure}
 
 %*************************************************************
 % DATA AVAILABILITY - This section is mandatory
 % CHOOSE ONE OPTION AND REMOVE THE OTHERS
 \newpage
-\section*{Dados}
+\section*{Disponibilidade de dados e código}
 
-\noindent The data that support the findings of this study are available at \\
-colab.research.google.com/drive/1Upls2ADBT56eJOo0saDpWYGbnElThzTp\#scrollTo=673f453
+\noindent O código-fonte dos três solvers (MDF, MEF e PINN), os scripts que
+reproduzem todas as tabelas e figuras deste artigo e os dados de saída estão
+disponíveis em repositório público versionado, a ser associado a um DOI (Zenodo) na
+versão final: \url{https://github.com/<usuario>/seminario-problema3}.
 
 \section{Conclusão}
 
 Neste trabalho, comparou-se o desempenho de três abordagens numéricas — o Método de Diferenças Finitas (MDF), o Método de Elementos Finitos (MEF) e as Redes Neurais Informadas pela Física (PINNs) — na solução do problema de cisalhamento antiplano em um compósito bifásico com inclusão quadrada.
 
-Na estimativa do módulo de cisalhamento efetivo, os três métodos apresentaram resultados concordantes, com $G_{ef} \approx 1{,}14$ para a razão de contraste $G_i/G_m = 5$. Esse acordo indica que abordagens de naturezas tão distintas convergem para a mesma propriedade homogeneizada quando aplicadas a uma quantidade de interesse de caráter integral, como é o caso do módulo efetivo.
+Na estimativa do módulo de cisalhamento efetivo, MDF e MEF apresentaram resultados praticamente idênticos ($G_{ef} \approx 1{,}14$ para $G_i/G_m = 5$), consistentes com os limites de Voigt--Reuss. A PINN, contudo, subestimou a propriedade ($G_{ef} = 0{,}982 \pm 0{,}002$ em cinco sementes), ficando abaixo do limite inferior de Reuss --- evidência de que um método livre de malha pode reproduzir o deslocamento global e ainda assim falhar na quantidade homogeneizada quando não captura adequadamente o efeito da interface.
 
-A concordância entre MDF e MEF mostrou-se praticamente exata, com erros relativos em norma $L^2$ da ordem de $10^{-3}$ ou inferiores em todos os campos avaliados. O MEF destacou-se, ainda, pela melhor representação das tensões de interface, beneficiando-se da atribuição das propriedades materiais por elemento e da integração por quadratura de Gauss. As PINNs, por sua vez, reproduziram de forma satisfatória o campo de deslocamento global, mas apresentaram desvios mais expressivos nas tensões (da ordem de $10^{-2}$ a $10^{-1}$), concentrados nas proximidades das quinas da inclusão, onde o gradiente do deslocamento é descontínuo. Vale ressaltar que esses desvios persistiram mesmo com a estratégia de decomposição de domínio e o acoplamento explícito do fluxo na interface \cite{jagtap2020conservative}, evidenciando a dificuldade intrínseca das redes em capturar singularidades de gradiente.
+A concordância entre MDF e MEF é boa no deslocamento (erro $L^2 \approx 3{,}4\times10^{-3}$), mas as tensões divergem de forma expressiva ($\tau_{xz}\approx 1{,}1\times10^{-1}$, $\tau_{yz}\approx 2{,}8\times10^{-1}$), por serem dominadas por artefatos junto à interface e às quinas --- o que também evidencia que o pico pontual de tensão não é uma métrica robusta. As PINNs reproduziram de forma satisfatória o campo de deslocamento global, mas apresentaram desvios ainda maiores nas tensões (de $30\%$ a $99\%$), além da subestimação sistemática do módulo efetivo, com os maiores erros concentrados nas proximidades das quinas da inclusão, onde o gradiente do deslocamento é descontínuo. Vale ressaltar que esses desvios persistiram mesmo com a estratégia de decomposição de domínio e o acoplamento explícito do fluxo na interface \cite{jagtap2020conservative}, evidenciando a dificuldade intrínseca das redes em capturar singularidades de gradiente \cite{wang2021understanding}.
 
-O estudo paramétrico, conduzido com o solver MDF, mostrou que o módulo efetivo cresce monotonicamente com a razão de contraste $G_i/G_m$ e satura para razões elevadas, enquanto o pico de tensão na interface aumenta de forma expressiva — comportamento fisicamente esperado para inclusões progressivamente mais rígidas.
+O estudo paramétrico, conduzido com o solver MDF, mostrou que o módulo efetivo cresce monotonicamente com a razão de contraste $G_i/G_m$ e desacelera para razões elevadas, enquanto o pico pontual de tensão aumenta cerca de $100\times$; esse crescimento, contudo, é dominado pela singularidade de quina, uma vez que o percentil $99\%$ cresce muito menos.
 
 Conclui-se, portanto, que os métodos clássicos de discretização permanecem mais precisos e robustos para problemas determinísticos de interface, sobretudo quando o objetivo é a captura acurada das tensões locais. As PINNs \cite{raissi2019pinn}, por outro lado, oferecem um paradigma flexível e livre de malha para a homogeneização computacional, particularmente atraente em cenários com geometrias complexas, problemas inversos ou estudos paramétricos, ainda que ao custo de menor acurácia nas regiões de gradiente acentuado.
 

@@ -923,6 +923,58 @@ ambos tomando o MDF como referência.
     \label{fig:erro}
 \end{figure}
 
+\subsection{Continuidade do fluxo na interface}
+
+Uma medida direta da física de transmissão é o erro de continuidade do fluxo normal
+na interface, $[\![\,G\,\partial_n w\,]\!]$, estimado por derivadas unilaterais de
+cada fase (Tabela~\ref{tab:interface}). O MEF satisfaz melhor essa continuidade
+\emph{pontual} (erro relativo $\sim 6\%$, decrescente com o refino: $8{,}4\%$,
+$6{,}2\%$, $4{,}7\%$ para $N=40,80,160$), ao passo que o MDF, por conservar o fluxo
+no sentido da média harmônica nas faces, apresenta resíduo pontual elevado
+($\sim 98\%$, praticamente insensível ao refino) --- o que ajuda a explicar a
+divergência observada entre as tensões nodais dos dois métodos. A PINN exibe o maior
+desequilíbrio ($\sim 193\%$), coerente com a subestimação de $G_{ef}$.
+
+\begin{table}[htbp]
+\centering
+\caption{Erro relativo de continuidade do fluxo normal na interface ($N=80$):
+$\|[\![\,G\,\partial_n w\,]\!]\|$ normalizado pela magnitude média do fluxo.}
+\label{tab:interface}
+\begin{tabular}{lc}
+\hline
+Método & erro relativo do fluxo \\
+\hline
+MDF  & $\sim 98\%$ \\
+MEF  & $\sim 6\%$ \\
+PINN & $\sim 193\%$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Os perfis na linha central $y=L/2$ (Figura~\ref{fig:perfil}) tornam esses
+comportamentos visíveis: MDF e MEF concentram $\tau_{xz}$ nas quinas da inclusão
+(com o MEF atingindo picos maiores), enquanto a PINN produz um perfil praticamente
+plano, ignorando a inclusão.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{fig_perfil_w.png}
+        \caption*{(a) deslocamento $w$}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{fig_perfil_txz.png}
+        \caption*{(b) tensão $\tau_{xz}$}
+    \end{minipage}
+    \caption{Perfis na linha central ($y=L/2$) pelos três métodos; a faixa cinza
+    marca a inclusão. Em (b), MDF e MEF concentram tensão nas quinas, enquanto a PINN
+    é quase plana.}
+    \label{fig:perfil}
+\end{figure}
+
 \subsection{Custo computacional}
 
 A Tabela~\ref{tab:custo} resume o custo de cada método (CPU, malha de solução

@@ -16,7 +16,7 @@ Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda
 |---|---|---|---|
 | 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código + texto §7.1 (Dirichlet exato, ordem ~1,5) |
 | 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | ✅ dígitos + Voigt–Reuss + def. operacional + nome "aparente" |
-| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | 🔧 max/p99/max_far no texto+tabela; ⏳ erro de fluxo normal (código) |
+| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | ✅ max/p99/max_far + **erro de fluxo normal na interface** (Tab.) |
 | 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 multi-seed + tabela de custo ✅; ⏳ sensibilidade λ, L-BFGS (código) |
 | 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência + abstract/conclusão reescritos |
 | 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | 🔧 ver seções abaixo |
@@ -108,7 +108,8 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Essencial | ✅ Convergência (circular **e** quadrada, MDF+MEF) | `scripts/convergence.py` + CSVs | 2.1, 3.4, 3.7 |
 | Essencial | ✅ Tabela de erros L² (w, τ_xz, τ_yz) MEF×MDF | `scripts/comparison.py` + CSV | 2.2, 3.7 |
 | Essencial | ✅ Métricas de tensão robustas (max, p99, max_far, L²) | `robust_stress_metrics` | 2.3 |
-| Essencial | ⏳ Erro de fluxo normal na interface | script + tabela | 2.3, 3.3 |
+| Essencial | ✅ Erro de fluxo normal na interface (MDF~98%, MEF~6%, PINN~193%) | `scripts/interface.py` + Tab. | 2.3, 3.3 |
+| Forte | ✅ Perfis em cortes (y=L/2) no artigo: `w` e `τ_xz`, 3 métodos | `TCAM_template.tex` | 3.7 |
 | Essencial | ✅ PINN multi-seed (5 sementes, CPU): G_ef 0,982±0,002, ~15 min | `scripts/pinn_seeds.py` + CSV | 2.4 |
 | Forte | ✅ Figuras do artigo (campos, convergência, paramétrico) | `scripts/make_figures.py` | 3.7 |
 | Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |

@@ -75,3 +75,48 @@ def robust_stress_metrics(sol, case=None, delta=0.05):
         "max_far": float(mag[far].max()) if far.any() else float("nan"),
         "l2": float(np.sqrt(np.mean(mag ** 2))),
     }
+
+
+def interface_flux_error(sol, case=None):
+    """Erro de continuidade do fluxo normal na interface (parecer 2.3/3.3).
+
+    A condicao fisica na interface e ``[[G d_n w]] = 0`` (equilibrio do fluxo
+    normal). Aqui o fluxo normal e estimado por derivada UNILATERAL de cada fase
+    (matriz e inclusao) e compara-se o salto. Assume interface quadrada alinhada
+    a malha. Retorna:
+
+      rms : raiz do erro quadratico medio do salto ao longo da interface
+      rel : rms normalizado pela magnitude media do fluxo (adimensional)
+
+    Percorre apenas os nos interiores de cada face (exclui as 4 quinas).
+    """
+    case = case or sol["case"]
+    W, h = sol["W"], sol["h"]
+    cx, cy = case.center
+    a, Gm, Gi = case.a, case.Gm, case.Gi
+    iL, iR = round((cx - a) / h), round((cx + a) / h)
+    jB, jT = round((cy - a) / h), round((cy + a) / h)
+
+    jumps, scale = [], []
+
+    def add(f_in, f_out):
+        jumps.append(f_in - f_out)
+        scale.append(0.5 * (abs(f_in) + abs(f_out)))
+
+    # faces verticais (normal em x): fluxo = G * dw/dx
+    for j in range(jB + 1, jT):
+        add(Gi * (W[iL + 1, j] - W[iL, j]) / h,      # esquerda: dentro
+            Gm * (W[iL, j] - W[iL - 1, j]) / h)      #           fora (matriz)
+        add(Gi * (W[iR, j] - W[iR - 1, j]) / h,      # direita: dentro
+            Gm * (W[iR + 1, j] - W[iR, j]) / h)      #          fora (matriz)
+    # faces horizontais (normal em y): fluxo = G * dw/dy
+    for i in range(iL + 1, iR):
+        add(Gi * (W[i, jB + 1] - W[i, jB]) / h,
+            Gm * (W[i, jB] - W[i, jB - 1]) / h)
+        add(Gi * (W[i, jT] - W[i, jT - 1]) / h,
+            Gm * (W[i, jT + 1] - W[i, jT]) / h)
+
+    jumps = np.asarray(jumps)
+    denom = float(np.sqrt(np.mean(np.asarray(scale) ** 2))) or 1.0
+    rms = float(np.sqrt(np.mean(jumps ** 2)))
+    return {"rms": rms, "rel": rms / denom}

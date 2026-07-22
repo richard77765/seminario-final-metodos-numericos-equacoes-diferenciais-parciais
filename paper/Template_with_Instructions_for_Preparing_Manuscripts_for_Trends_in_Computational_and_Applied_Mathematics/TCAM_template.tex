@@ -101,9 +101,11 @@ Finitas, Elementos Finitos e PINNs.}
 Diversos materiais compósitos apresentam uma célula de inclusão onde se torna necessário conhecer as regiões de concentração de tensão e possíveis pontos de falha. Podemos ver aplicações desses materiais em biomateriais, cerâmicas, concretos e materiais porosos.
 A formulação antiplana reduz o problema tridimensional a um problema bidimensional preservando aspectos físicos essenciais.
 
-Neste trabalho, faremos uma comparação das soluções obtidas pelos métodos de Diferenças Finitas, Elementos Finitos e a solução obtida através da PINN. Em Diferenças Finitas, as derivadas parciais podem ser expressas através de combinação linear de seus nós vizinhos resultando em um sistema de equações lineares ao final \cite{lin2021simulation}\cite{leveque2007}. Em Elementos Finitos, usa-se a formulação clássica aplicando o método de resíduos ponderados para encontrar a formulação fraca e o método de Galerkin para as funções de interpolação resultando também em um sistema linear \cite{logan}. Já na simulação obtida com uso da PINN, tem-se uma abordagem de aprendizado profundo que integra as leis da física diretamente na função de perda da rede neural \cite{raissi2019pinn,karniadakis2021physics,lu2021deepxde}.
+Neste trabalho, faremos uma comparação das soluções obtidas pelos métodos de Diferenças Finitas, Elementos Finitos e a solução obtida através da PINN. Em Diferenças Finitas, as derivadas parciais podem ser expressas através de combinação linear de seus nós vizinhos resultando em um sistema de equações lineares ao final \cite{lin2021simulation}\cite{leveque2007}. Em Elementos Finitos, usa-se a formulação clássica aplicando o método de resíduos ponderados para encontrar a formulação fraca e o método de Galerkin para as funções de interpolação resultando também em um sistema linear \cite{logan}. Já na simulação obtida com uso da PINN, tem-se uma abordagem de aprendizado profundo que integra as leis da física diretamente na função de perda da rede neural \cite{goodfellow2016deep,raissi2019pinn,karniadakis2021physics,lu2021deepxde}.
 
-O objetivo principal é avaliar a eficácia de cada método na captura dos campos locais e na estimativa do módulo de cisalhamento efetivo do compósito, confrontando a eficiência das discretizações clássicas com a flexibilidade da inteligência artificial informada pela física
+Do ponto de vista numérico, o problema pertence à classe dos problemas elípticos de interface, com coeficiente descontínuo e possíveis singularidades de tensão nas quinas da inclusão \cite{kohno1995singularities}. Esquemas de diferenças finitas conservativos, com média harmônica dos coeficientes nas faces, constituem um caminho clássico para preservar a continuidade do fluxo através da interface \cite{leveque2007,quarteroni2007numerical,beale2006accuracy}; o método de elementos finitos, por sua vez, trata a interface de forma natural pela forma fraca e serve de base para a homogeneização computacional de microestruturas \cite{babuska1970finite,hughes2000finite,geers2010multiscale,torquato2002random,moulinec1998numerical}. Mais recentemente, as PINNs foram aplicadas a problemas de interface, com estratégias de decomposição de domínio e de captura de descontinuidades de gradiente \cite{jagtap2020conservative,jagtap2020extended,moseley2023finite,wu2023convergence,tseng2023cusp}.
+
+Embora MDF, MEF e PINNs tenham sido amplamente estudados de forma isolada, ainda são escassas comparações controladas --- sob a mesma geometria, condições de transmissão, métricas de erro e orçamento computacional --- que distingam a precisão em quantidades globais (como o módulo efetivo) da precisão em tensões locais próximas às quinas. Este trabalho busca preencher essa lacuna com um estudo reprodutível. As contribuições são: (i) a comparação dos três métodos sobre o mesmo problema, com validação consistente contra a solução analítica de inclusão circular; (ii) um estudo de convergência e de contraste $G_i/G_m$ com métricas de tensão robustas; e (iii) a avaliação estatística da PINN decomposta, com múltiplas sementes, evidenciando limites físicos da estimativa do módulo efetivo. Todo o código e os dados são disponibilizados publicamente.
 
 
 \section{Descrição física do problema}
@@ -211,6 +213,29 @@ Nas bordas superior e inferior, impõe-se condição de fluxo nulo:
 \end{eqnarray}
 
 Neste caso, temos também condição de contorno de Neumann.
+
+\subsection{Formulação variacional e boa-postura}
+
+Sejam $\Gamma_D = \{0,L\}\times[0,L]$ o contorno de Dirichlet (laterais) e
+$\Gamma_N = [0,L]\times\{0,L\}$ o de Neumann (topo e base). Define-se o espaço de
+teste
+\begin{equation*}
+    V_0 = \{\, v \in H^1(\Omega) : v = 0 \text{ em } \Gamma_D \,\}.
+\end{equation*}
+Como a condição de Dirichlet é não-homogênea ($w = \gamma L$ em $x=L$), introduz-se
+um levantamento $w_D \in H^1(\Omega)$ que satisfaz os dados de contorno (por exemplo
+$w_D(x,y)=\gamma x$) e busca-se $u = w - w_D \in V_0$ tal que
+\begin{equation}
+    a(u,v) = -\,a(w_D,v) \quad \forall\, v \in V_0,
+    \qquad
+    a(w,v) = \int_{\Omega} G\,\nabla w \cdot \nabla v \; d\Omega .
+    \label{eq:variacional}
+\end{equation}
+Como $G(x,y) \ge G_{\min} = \min(G_m,G_i) > 0$, a forma bilinear $a(\cdot,\cdot)$ é
+contínua e coerciva em $V_0$; pelo teorema de Lax--Milgram, o problema
+\eqref{eq:variacional} admite solução única. As condições de interface
+\eqref{eq:interface} ficam embutidas nessa formulação fraca, surgindo naturalmente
+da integração por partes em cada fase.
 %********************************************************
 \section{Método de diferenças finitas}
 
@@ -395,12 +420,16 @@ Cada linha da matriz $A$ corresponde à equação discreta associada a um
 nó da malha. Devido ao stencil de cinco pontos empregado, a matriz
 resultante é esparsa, contendo coeficientes apenas para os vizinhos
 imediatos de cada nó, o que favorece o emprego de métodos para sistemas
-lineares esparsos \cite{saad2003iterative}.
+lineares esparsos \cite{saad2003iterative}. Como $a=0{,}15$ e o espaçamento
+$h=L/N$ é múltiplo de $a$, a interface fica alinhada aos nós da malha; neste
+trabalho o sistema é resolvido por fatoração esparsa direta. Para interfaces não
+alinhadas à malha, métodos de interface dedicados seriam mais adequados
+\cite{li2006immersed}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Método de elementos finitos}
 
-Baseando-se no método de resíduos ponderados e aplicando a formulação que vemos em \cite{logan,hughes2000finite}, multiplicamos a equação por uma função teste $v$ e aplica-se a integração no domínio, tal que:
+Baseando-se no método de resíduos ponderados e aplicando a formulação que vemos em \cite{logan,hughes2000finite}, multiplicamos a equação por uma função teste $v \in V_0$ (que se anula em $\Gamma_D$) e integra-se no domínio, de modo que:
 
 \begin{equation*}
 \int_{\Omega} v \, \nabla \cdot (G \nabla w)\, d\Omega = 0.
@@ -519,6 +548,30 @@ B=
 Logo,
 $$\mathbf{K}=\int_{\Omega}\mathbf{B}^TG\mathbf{B} d\Omega$$
 
+\subsection{Discretização, quadratura e cálculo das tensões}
+
+O domínio é discretizado em uma malha estruturada de $80\times80$ elementos
+quadrilaterais bilineares (Q4), com $81\times81 = 6\,561$ nós. As funções de forma
+Q4 no elemento de referência $(\xi,\eta)\in[-1,1]^2$ são
+\begin{equation*}
+    N_a(\xi,\eta) = \tfrac{1}{4}\,(1+\xi_a\xi)(1+\eta_a\eta), \qquad a=1,\dots,4,
+\end{equation*}
+em que $(\xi_a,\eta_a)$ são as coordenadas dos vértices. As integrais elementares de
+$\mathbf{K}$ são avaliadas por \emph{quadratura de Gauss} $2\times2$, e o módulo $G$
+é atribuído por elemento a partir do centroide (fase da matriz ou da inclusão). Como
+a interface é alinhada à malha ($L/N$ múltiplo de $a=0{,}15$), não há elementos
+cortados.
+
+A condição de Dirichlet não-homogênea é imposta por eliminação dos graus de
+liberdade em $\Gamma_D$ ($w=0$ em $x=0$ e $w=\gamma L$ em $x=L$); a de Neumann é
+natural (o termo de contorno em $\Gamma_N$ se anula). O sistema linear esparso
+resultante é resolvido por fatoração esparsa direta.
+
+As tensões são pós-processadas a partir do campo nodal $w$ por diferenças centrais,
+com $G$ nodal --- a mesma convenção adotada no MDF, para tornar a comparação justa.
+Ressalta-se, porém, que essa tensão nodal \emph{não} coincide com o fluxo nas faces
+do MDF junto à interface, o que explica parte da divergência observada nas tensões
+entre os dois métodos (Tabela~\ref{tab:erros}).
 %********************************************************
 \section{PINN}
 
@@ -566,7 +619,10 @@ A função de perda total é
     + \lambda_{\text{CC}}\,\mathcal{L}_{\text{CC}}
     + \lambda_{I}\,\mathcal{L}_{I},
 \end{equation}
-com $\lambda_{\text{EDP}} = 1$, $\lambda_{\text{CC}} = \lambda_I = 10$.
+com $\lambda_{\text{EDP}} = 1$ e $\lambda_{\text{CC}} = \lambda_I = 10$. Esses pesos
+foram escolhidos empiricamente, para priorizar as condições de contorno e de
+interface; como os termos da perda têm escalas físicas distintas, uma normalização
+adaptativa e um estudo de sensibilidade aos pesos ficam como trabalho futuro.
 
 \paragraph{Resíduo da EDP.}
 O resíduo de Laplace é avaliado em pontos de colocação amostrados
@@ -608,9 +664,12 @@ do fluxo de tensão:
 \end{aligned}
 \end{equation}
 onde $\partial_n = \mathbf{n}\cdot\nabla$ é a derivada na direção normal exterior à
-inclusão, calculada analiticamente para cada face do quadrado.
+inclusão, calculada analiticamente para cada face do quadrado. Nas quatro quinas a
+normal não é unívoca; adota-se a normal da face mais próxima, tratamento de pouca
+influência dado o número reduzido de pontos exatamente sobre os vértices.
 
-Os pontos são amostrados aleatoriamente com semente fixa ($s = 42$):
+Os pontos são amostrados aleatoriamente \emph{uma única vez} (mantidos fixos ao
+longo do treino), com semente $s = 42$:
 \begin{itemize}
     \item $N_m = 4\,000$ pontos no interior de $\Omega_m$ (matriz);
     \item $N_i = 4\,000$ pontos no interior de $\Omega_i$ (inclusão);
@@ -621,8 +680,11 @@ Os pontos são amostrados aleatoriamente com semente fixa ($s = 42$):
 Os parâmetros são otimizados pelo algoritmo Adam \cite{kingma2015adam} com taxa de
 aprendizado $\eta = 10^{-3}$ ao longo de $4\,000$ épocas. As duas redes são
 treinadas simultaneamente; os gradientes de $\mathcal{L}_I$ se propagam por ambas,
-forçando o acoplamento na interface. A semente aleatória é fixada para garantir
-reprodutibilidade.
+forçando o acoplamento na interface. A semente é fixada para tornar cada execução
+repetível --- embora a reprodutibilidade exata dependa ainda de hardware, versões de
+biblioteca e modo determinístico. Como a variabilidade entre inicializações é
+relevante em redes neurais, os resultados finais são reportados como média $\pm$
+desvio sobre cinco sementes (Tabela~\ref{tab:gef}).
 
 \subsection{Avaliação e cálculo das tensões}
 
@@ -647,8 +709,16 @@ subdomínio via \textit{autograd}, evitando a diferenciação do campo costurado
 
 O módulo efetivo é estimado por:
 \begin{equation*}
-    G_{ef} = \frac{\langle \tau_{xz} \rangle}{\gamma}.
+    G_{ef} = \frac{\langle \tau_{xz} \rangle}{\gamma},
+    \qquad
+    \langle \tau_{xz} \rangle = \frac{1}{|\Omega|}\int_{\Omega} G\,\frac{\partial w}{\partial x}\, d\Omega ,
 \end{equation*}
+com a média espacial $\langle\,\cdot\,\rangle$ aproximada, em cada método, pela média
+aritmética dos valores nodais de $\tau_{xz}$ na malha $81\times81$. Como as condições
+de contorno impostas são \emph{mistas} (Dirichlet cinemático nas laterais e Neumann
+homogêneo no topo/base), e não periódicas, $G_{ef}$ deve ser entendido como um módulo
+\emph{aparente} da célula sob essas condições; uma estimativa de homogeneização
+periódica, a rigor, exigiria condições de contorno periódicas.
 
 %********************************************************
 \section{Resultados numéricos}
@@ -853,6 +923,29 @@ ambos tomando o MDF como referência.
     \label{fig:erro}
 \end{figure}
 
+\subsection{Custo computacional}
+
+A Tabela~\ref{tab:custo} resume o custo de cada método (CPU, malha de solução
+$N=80$). MDF e MEF resolvem um sistema linear esparso de $6\,561$ incógnitas em
+frações de segundo; a PINN, com $19\,202$ parâmetros treináveis (duas redes), custa
+cerca de $180$~s por semente ($4\,000$ épocas) --- sendo a mais cara, ainda que livre
+de malha e substancialmente acelerável em GPU.
+
+\begin{table}[htbp]
+\centering
+\caption{Custo computacional aproximado (CPU, $N=80$).}
+\label{tab:custo}
+\begin{tabular}{lcc}
+\hline
+Método & incógnitas / parâmetros & tempo \\
+\hline
+MDF  & $6\,561$ incógnitas  & $\sim 0{,}2$ s \\
+MEF  & $6\,561$ incógnitas  & $\sim 3$ s \\
+PINN & $19\,202$ parâmetros & $\sim 180$ s / semente \\
+\hline
+\end{tabular}
+\end{table}
+
 \subsection{Estudo paramétrico: razão de contraste $G_i/G_m$}
 
 Com o solver MDF ($N=80$), variou-se a razão de contraste
@@ -916,7 +1009,7 @@ O estudo paramétrico, conduzido com o solver MDF, mostrou que o módulo efetivo
 
 Conclui-se, portanto, que os métodos clássicos de discretização permanecem mais precisos e robustos para problemas determinísticos de interface, sobretudo quando o objetivo é a captura acurada das tensões locais. As PINNs \cite{raissi2019pinn}, por outro lado, oferecem um paradigma flexível e livre de malha para a homogeneização computacional, particularmente atraente em cenários com geometrias complexas, problemas inversos ou estudos paramétricos, ainda que ao custo de menor acurácia nas regiões de gradiente acentuado.
 
-Como perspectivas de trabalhos futuros, destacam-se o tratamento dedicado das singularidades nas quinas da inclusão — por meio de amostragem adaptativa, ponderação local da função de perda ou imposição forte das condições de interface —, a investigação de diferentes geometrias e frações volumétricas de inclusão, a extensão da análise ao caso tridimensional e a aplicação das PINNs a problemas inversos de identificação de propriedades materiais.
+Como perspectivas de trabalhos futuros, destacam-se o tratamento dedicado das singularidades nas quinas da inclusão — por meio de amostragem adaptativa, ponderação local da função de perda ou imposição forte das condições de interface \cite{sukumar2022exact} —, a investigação de diferentes geometrias e frações volumétricas de inclusão, a extensão da análise ao caso tridimensional e a aplicação das PINNs a problemas inversos de identificação de propriedades materiais.
 
 \bibliographystyle{ieeetr}
 \bibliography{TCAM_bibliography}

@@ -15,9 +15,9 @@ Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda
 | # | Ponto do parecer | Gravidade | Status |
 |---|---|---|---|
 | 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código + texto §7.1 (Dirichlet exato, ordem ~1,5) |
-| 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | 🔧 dígitos + Voigt–Reuss no texto; ⏳ def. operacional / nome "aparente" |
-| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | 🔧 max/p99/max_far no texto+tabela; ⏳ erro de fluxo normal |
-| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 multi-seed + tempo ✅; ⏳ tabela de custo, sensibilidade λ, L-BFGS |
+| 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | ✅ dígitos + Voigt–Reuss + def. operacional + nome "aparente" |
+| 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | 🔧 max/p99/max_far no texto+tabela; ⏳ erro de fluxo normal (código) |
+| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 multi-seed + tabela de custo ✅; ⏳ sensibilidade λ, L-BFGS (código) |
 | 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência + abstract/conclusão reescritos |
 | 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | 🔧 ver seções abaixo |
 
@@ -115,11 +115,14 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |
 | Texto | ✅ Abstract/conclusão reescritos (PINN≠1,14; sem "MEF superior") | `TCAM_template.tex` | 3.1, 2.5 |
 | Texto | ✅ §7.1 validação Dirichlet + ordem ~1,5; §7.3 tensões 10⁻¹; +Tabelas conv/erros/param/gef | `TCAM_template.tex` | 2.1, 2.5 |
-| Texto | ✅ Condições de interface `[[·]]=0`; ⏳ espaços `V₀`/levantamento Dirichlet | `TCAM_template.tex` §3 | 3.3 |
-| Texto | ⏳ Q4/Gauss no corpo do MEF; pós-proc. de tensões | `TCAM_template.tex` §5 | 3.5 |
+| Texto | ✅ Formulação variacional: `V₀`, levantamento Dirichlet, Lax–Milgram, saltos | `TCAM_template.tex` §3 | 3.3 |
+| Texto | ✅ MEF: Q4 + Gauss 2×2 + malha + Dirichlet + pós-proc. de tensões | `TCAM_template.tex` §5 | 3.5 |
+| Texto | ✅ Introdução expandida (revisão em blocos + lacuna + contribuições) | `TCAM_template.tex` §1 | 3.2 |
+| Texto | ✅ PINN: amostragem fixa, quinas, pesos λ, reprodutibilidade moderada | `TCAM_template.tex` §6 | 3.6 |
+| Texto | ✅ Custo comput. (Tab.) + G_ef operacional/"aparente"; §4 solver+interface | `TCAM_template.tex` | 2.2, 3.4, 3.7 |
 | Editorial | ✅ comparison, Kronecker, "seção", autograd, "PINN, tem-se" | `TCAM_template.tex` | 5 |
 | Editorial | ✅ "Dados" em PT + repo versionado/DOI | `TCAM_template.tex` | 3.8 |
-| Editorial | ✅ Bibliografia 7 → **19** (interface/PINN/homogeneização), todas citadas; ⏳ chegar a ~25–40 | `paper/TCAM_bibliography.bib` | 5 |
+| Editorial | ✅ Bibliografia 7 → **25** (interface/PINN/homogeneização/num.), todas citadas | `paper/TCAM_bibliography.bib` | 5 |
 | Figuras | ✅ +3 no artigo (convergência, paramétrico, painel 3 métodos); legenda erro.png corrigida | `paper/` | 5 |
 | Template | Converter TCAM.cls → template da REMAT | `paper/` | — |
 

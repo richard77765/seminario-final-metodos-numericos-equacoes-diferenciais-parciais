@@ -33,9 +33,7 @@ Parâmetros oficiais: `L=1, a=0.15, Gₘ=1, Gᵢ=5, γ=0.01`.
 src/          geometry, analytic, fdm, fem, pinn, metrics, viz, console   (núcleo)
 scripts/      validate, convergence, comparison, parametric, pinn_seeds, make_figures
 outputs/      figures/  tables/                                  (gerados)
-paper/        LaTeX (TCAM_template.tex) + .bib + figuras
 notebooks/    seminario_colab.py     (notebook Colab original, para proveniência)
-docs/         correcoes.md  (rastro das correções vs. parecer)
 ```
 
 ---

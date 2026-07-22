@@ -10,11 +10,6 @@ outputs/figures/*.png
 outputs/figures/*.pdf
 outputs/*.npz
 
-# LaTeX (auxiliares)
-paper/*.aux
-paper/*.log
-paper/*.out
-paper/*.bbl
-paper/*.blg
-paper/*.synctex.gz
-paper/*.toc
+# Manuscrito e notas de revisão: apenas locais, fora do repositório de código
+paper/
+docs/

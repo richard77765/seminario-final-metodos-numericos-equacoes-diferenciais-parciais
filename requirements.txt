@@ -4,5 +4,6 @@ scipy>=1.10
 matplotlib>=3.7
 
 # PINN (opcional — necessário apenas para src/pinn.py e scripts/pinn_seeds.py)
-# Recomenda-se GPU. Instale conforme sua plataforma: https://pytorch.org
+# Roda em CPU (~9 min/semente); GPU só acelera. Build CPU:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
 torch>=2.0

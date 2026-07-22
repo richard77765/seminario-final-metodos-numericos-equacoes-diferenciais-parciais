@@ -17,7 +17,7 @@ Legenda: ✅ feito · 🔧 em andamento · ⏳ a fazer · 🧭 decidido (aguarda
 | 2.1 | Validação circular não valida o problema finito (viola BCs) | Crítico | ✅ código corrigido; ⏳ texto §7.1 |
 | 2.2 | `G_ef` sem rigor / sanidade Voigt–Reuss | Crítico | ✅ verificado; ⏳ definição operacional no texto |
 | 2.3 | `max|τ|` nas quinas não é métrica robusta | Alto | ⏳ trocar por L²/percentil/erro de fluxo |
-| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🧭 script multi-seed a criar (roda na GPU) |
+| 2.4 | PINN com 1 semente; sem custo computacional | Alto | 🔧 script pronto, rodando (CPU, 5 sementes×4000) |
 | 2.5 | "MEF superior" não demonstrado (MDF é a referência) | Crítico | ✅ evidência levantada; ⏳ reescrever afirmações |
 | 3.x | Formulação, tabelas, figuras, editorial | Médio/Alto | ⏳ ver seções abaixo |
 
@@ -99,7 +99,8 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Essencial | ✅ Tabela de erros L² (w, τ_xz, τ_yz) MEF×MDF | `scripts/comparison.py` + CSV | 2.2, 3.7 |
 | Essencial | ✅ Métricas de tensão robustas (max, p99, max_far, L²) | `robust_stress_metrics` | 2.3 |
 | Essencial | ⏳ Erro de fluxo normal na interface | script + tabela | 2.3, 3.3 |
-| Essencial | 🧭 PINN multi-seed (5–10) média±desvio + custo | `scripts/pinn_seeds.py` (GPU) | 2.4 |
+| Essencial | 🔧 PINN multi-seed (5–10) média±desvio + custo (rodando em CPU) | `scripts/pinn_seeds.py` | 2.4 |
+| Forte | ✅ Figuras do artigo (campos, convergência, paramétrico) | `scripts/make_figures.py` | 3.7 |
 | Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |
 | Texto | 📝 Reescrever abstract/conclusão (moderar "convergência", "MEF superior") | CORRECOES_LATEX §2 | 3.1, 2.5 |

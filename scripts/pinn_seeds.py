@@ -4,7 +4,7 @@ Uma única execução (semente 42) não permite avaliar a variabilidade do trein
 Aqui treina-se a PINN decomposta com N sementes e reporta-se média ± desvio de
 G_ef e dos erros vs MDF, além do TEMPO de parede e do nº de parâmetros treináveis.
 
-Requer PyTorch (recomendada GPU). Rode na sua máquina WSL2+GPU:
+Requer PyTorch; roda em CPU (~9 min/semente nesta máquina) ou GPU, se houver.
 
     python scripts/pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
     python scripts/pinn_seeds.py --seeds 0,1,2,3,4,5,6,7,8,9  # 10 sementes
@@ -60,6 +60,10 @@ def main():
         sol = pinn.evaluate_decomposed(net_m, net_i, OFFICIAL, N=80, device=device)
         dt = time.time() - t0
         err = field_errors(sol, ref)
+        if s == seeds[0]:  # guarda uma solucao para gerar as figuras da PINN
+            np.savez(os.path.join(ROOT, "outputs", f"pinn_sol_seed{s}.npz"),
+                     X=sol["X"], Y=sol["Y"], W=sol["W"],
+                     txz=sol["txz"], tyz=sol["tyz"])
         if n_par is None:
             n_par = _n_params(net_m) + _n_params(net_i)
         linhas.append(dict(seed=s, Gef=sol["Gef"], err_w=err["w"],

@@ -47,8 +47,9 @@ pip install -r requirements.txt                     # torch é opcional (só p/ 
 python scripts/validate.py        # validação + convergência (gera outputs/tables/…)
 ```
 
-Os solvers MDF/MEF usam apenas `numpy`/`scipy`. A PINN (`src/pinn.py`) requer
-`torch` e é bem mais rápida em GPU.
+Os solvers MDF/MEF usam apenas `numpy`/`scipy`. A PINN requer `torch` e **roda em
+CPU** (~9 min por semente nesta máquina); GPU é opcional (apenas acelera).
+As figuras do artigo saem de `python scripts/make_figures.py`.
 
 ## Resultados principais (apurados do próprio código)
 

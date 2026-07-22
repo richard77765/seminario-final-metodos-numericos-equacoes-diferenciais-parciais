@@ -1,0 +1,8 @@
+# Núcleo numérico (MDF, MEF, métricas, visualização)
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+
+# PINN (opcional — necessário apenas para src/pinn.py e scripts/pinn_seeds.py)
+# Recomenda-se GPU. Instale conforme sua plataforma: https://pytorch.org
+torch>=2.0

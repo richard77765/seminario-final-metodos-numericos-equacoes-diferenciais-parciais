@@ -1,0 +1,439 @@
+\documentclass[10pt]{beamer}
+%\usetheme[
+%%% option passed to the outer theme
+%    progressstyle=fixedCircCnt,   % fixedCircCnt, movingCircCnt (moving is deault)
+%] {Feather}
+  
+% If you want to change the colors of the various elements in the theme, edit and uncomment the following lines
+
+
+
+\usetheme{Madrid}
+%\usecolortheme{whale}
+% Change the bar colors:
+%\setbeamercolor{Feather}{fg=red!20,bg=red}
+%\setbeamercolor{Feather}{fg=white,bg=white}
+%\setbeamercolor{Feather}{fg=purple!25,bg=purple!50}
+%\setbeamercolor{Feather}{fg=magenta!25,bg=magenta!65}
+
+
+% Change the color of the structural elements:
+%\setbeamercolor{structure}{fg=red}
+%\setbeamercolor{structure}{fg=magenta}
+%\setbeamercolor{structure}{fg=purple}
+
+% Change the frame title text color:
+%\setbeamercolor{frametitle}{fg=blue}
+\setbeamercolor{frametitle}{fg=white}
+
+% Change the normal text color background:
+%\setbeamercolor{normal text}{fg=black,bg=gray!10}
+%\setbeamercolor{normal text}{fg=black,bg=yellow!10}
+%-------------------------------------------------------
+% INCLUDE PACKAGES
+%-------------------------------------------------------
+
+\usepackage{tkz-graph}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+%\usepackage{LobsterTwo}
+\usepackage{subfigure}
+
+
+
+\usepackage{multicol}
+%\setlength\columnseprule{0.5pt}
+\setlength{\columnsep}{5mm}
+
+\usepackage{amscd}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{eucal}
+\usepackage{enumerate}
+\usepackage{indentfirst}
+\usepackage{booktabs}
+\usepackage{bm}
+
+%\usepackage{hyperref}
+
+
+
+\newcommand{\La}{\mathscr{L}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\orb}{\mathcal{O}}
+
+%Disjoint Union
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%OPERADORES MATEMÁTICOS
+% \sen , \arcsen , etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\arcsen}{arcsen}
+\DeclareMathOperator{\senh}{senh}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\arcsec}{arcsec}
+\DeclareMathOperator{\arccsc}{arccsc}
+\DeclareMathOperator{\traco}{traço}
+\DeclareMathOperator{\mmc}{mmc}
+\DeclareMathOperator{\mdc}{mdc}
+\DeclareMathOperator{\image}{Im}
+\DeclareMathOperator{\vspan}{span}
+\DeclareMathOperator{\e}{\mathrm{e}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\divv}{div}
+
+
+\newcommand{\dlim}{\displaystyle\lim}
+\newcommand{\dint}{\displaystyle\int}
+\newcommand{\doint}{\displaystyle\oint}
+\newcommand{\dsum}{\displaystyle\sum}
+\newcommand{\lsum}{\sum\limits}
+
+
+\newtheorem{def1}[section]{Definição}
+\newtheorem{teo}[section]{Teorema}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+
+
+\begin{document}
+
+
+\title[Mecânica Clássica e Quântica]{Mecânica Clássica e Quântica} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+
+\author{  Bianca Bonfim\\
+Pedro Cruz \\
+Richard Francis\\
+
+} % Your name
+\institute[MCCT] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+}
+
+%\date{\today} % Date, can be changed to a custom date
+\begin{frame}
+	\maketitle
+
+\end{frame}
+
+
+\begin{frame}{Sumário}
+\tableofcontents
+\end{frame}
+
+%---------------------------------------
+\section{Problema}
+\begin{frame}{Problema de Dois Corpos}
+    Considere o problema de interação gravitacional entre dois corpos esféricos que podem
+ser considerados como partículas pontuais com massa constante $m_1$ e $m_2$. 
+
+Utilizando a Mecânica Newtoniana e conhecendo as condições iniciais $\vec{r_1}(t = 0) = \vec{r_1}(0)$,
+$\vec{v_1}(t = 0) =\vec{v_1}(0)$ e $\vec{r_2}(t = 0) =\vec{r_2}(0)$, $\vec{v_2}(t = 0) = \vec{v_2}(0)$, devemos encontrar a posição de ambos corpos em cada instante de tempo $t$.
+\end{frame}
+\begin{frame}{Problema de dois corpos}
+   Considere duas particulas pontuais de massas constantes $m_1$ e $m_2$, nas posicoes
+$\bm r_1(t)$ e $\bm r_2(t)$. A interacao gravitacional entre elas é dada por:
+\begin{equation}
+\bm F_{12}
+=G\frac{m_1m_2}{|\bm r_2-\bm r_1|^3}(\bm r_2-\bm r_1),
+\qquad
+\bm F_{21}=-\bm F_{12}.
+\end{equation}
+
+Definindo
+\begin{equation}
+\bm r=\bm r_2-\bm r_1,\qquad r=|\bm r|,
+\end{equation}
+o potencial gravitacional é
+\begin{equation}
+U(\bm r)=-\frac{Gm_1m_2}{r}.
+\end{equation}
+
+Tambem definimos a massa total, a massa reduzida e o centro de massa:
+\begin{equation}
+M=m_1+m_2,\qquad
+\mu=\frac{m_1m_2}{m_1+m_2},\qquad
+\bm R=\frac{m_1\bm r_1+m_2\bm r_2}{M}.
+\end{equation}
+
+\end{frame}
+\section{Mecânica Newtoniana}
+\begin{frame}{Mecânica Newtoniana}
+    As equacoes de Newton sao
+\begin{equation}
+m_1\ddot{\bm r}_1
+=G\frac{m_1m_2}{r^3}\bm r,
+\qquad
+m_2\ddot{\bm r}_2
+=-G\frac{m_1m_2}{r^3}\bm r.
+\end{equation}
+
+Somando as duas equações:
+\begin{equation}
+M\ddot{\bm R}=0.
+\end{equation}
+
+Portanto, o centro de massa realiza movimento retilíneo uniforme:
+\begin{equation}
+\bm R(t)=\bm R_0+\bm V_{CM}t,
+\end{equation}
+com
+\begin{equation}
+\bm R_0=\frac{m_1\bm r_1(0)+m_2\bm r_2(0)}{M},
+\qquad
+\bm V_{CM}=\frac{m_1\bm v_1(0)+m_2\bm v_2(0)}{M}.
+\end{equation}
+\end{frame}
+
+\begin{frame}{Mecânica Newtoniana}
+    Subtraindo as acelerações, obtemos a equação relativa:
+\begin{equation}
+\ddot{\bm r}=-\frac{GM}{r^3}\bm r.
+\end{equation}
+
+Assim, o problema de dois corpos se reduz ao movimento de uma particula fictícia
+de massa reduzida $\mu$ sob o potencial central:
+\begin{equation}
+U(r)=-\frac{GM\mu}{r}.
+\end{equation}
+
+As condicoes iniciais relativas são:
+\begin{equation*}
+\bm r_0=\bm r_2(0)-\bm r_1(0),
+\qquad
+\bm v_0=\bm v_2(0)-\bm v_1(0).
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Mecânica Newtoniana}
+    Conhecida a solucao relativa $\bm r(t)$, as posicoes reais dos corpos sao
+\begin{equation}
+\boxed{
+\bm r_1(t)=\bm R_0+\bm V_{CM}t-\frac{m_2}{M}\bm r(t)
+}
+\end{equation}
+e
+\begin{equation}
+\boxed{
+\bm r_2(t)=\bm R_0+\bm V_{CM}t+\frac{m_1}{M}\bm r(t)
+}.
+\end{equation}
+\end{frame}
+
+\section{Mecânica Lagrangeana}
+\begin{frame}{Mecânica Lagrangeana}
+Usaremos como coordenadas generalizadas as coordenadas cartesianas
+$r_1 = (x_1, y_1, z_1)$ e $r_2 = (x_2, y_2, z_2)$. Como $L=T-U$ então a Lagrangiana do sistema é:
+\begin{equation*}
+L=
+\frac{1}{2}m_1\dot{\bm r}_1^{\,2}
++\frac{1}{2}m_2\dot{\bm r}_2^{\,2}
++\frac{Gm_1m_2}{r}.
+\end{equation*}
+
+    Usando as coordenadas de centro de massa $\bm R$ e $\bm r$, obtém-se
+    \begin{equation*}
+T=
+\frac{1}{2}M\dot{\bm R}^{\,2}
++\frac{1}{2}\mu\dot{\bm r}^{\,2}.
+\end{equation*}
+
+Onde $\mu=\frac{m_1 m_2}{m_1+m_2}$ e $M=m_1+m_2$.
+Assim,
+\begin{equation*}
+L(\dot{\bm R},\bm r,\dot{\bm r})
+=
+\frac{1}{2}M\dot{\bm R}^{\,2}
++\frac{1}{2}\mu\dot{\bm r}^{\,2}
++\frac{GM\mu}{r}.
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Mecânica Lagrangeana}
+Pelas equações de Euler-Lagrange, obtém-se para $\bm R$
+\begin{equation*}
+\frac{d}{dt}
+\left(
+\frac{\partial L}{\partial \dot {\bm R}}
+\right) =
+\frac{\partial L}{\partial \bm R}=0.
+\end{equation*}
+E portanto,
+$$M \ddot{\bm R}=0$$
+A mesma equação obtida por Newton.
+
+Para a coordenada relativa:
+\begin{equation*}
+\frac{\partial L}{\partial \bm r}
+=GM\mu\frac{\partial}{\partial \bm r}
+\left(\frac{1}{r}\right)
+=-GM\mu\frac{\bm r}{r^3}.
+\end{equation*}
+
+Assim,
+\begin{equation*}
+\mu\ddot{\bm r}+GM\mu\frac{\bm r}{r^3}=0,
+\end{equation*}
+ou
+\begin{equation*}
+\boxed{
+\ddot{\bm r}=-\frac{GM}{r^3}\bm r
+}.
+\end{equation*}
+\end{frame}
+
+\section{Mecânica Hamiltoniana}
+\begin{frame}{Mecânica Hamiltoniana}
+    Os momentos conjugados são:
+\begin{equation}
+\bm P=\frac{\partial L}{\partial \dot{\bm R}}=M\dot{\bm R},
+\qquad
+\bm p=\frac{\partial L}{\partial \dot{\bm r}}=\mu\dot{\bm r}.
+\end{equation}
+
+A Hamiltoniana e obtida por transformacao de Legendre:
+\begin{equation}
+H=\bm P\cdot\dot{\bm R}+\bm p\cdot\dot{\bm r}-L.
+\end{equation}
+
+Como
+\begin{equation}
+\dot{\bm R}=\frac{\bm P}{M},
+\qquad
+\dot{\bm r}=\frac{\bm p}{\mu},
+\end{equation}
+segue que
+\begin{equation}
+\boxed{
+H(\bm R,\bm P,\bm r,\bm p)
+=\frac{P^2}{2M}+\frac{p^2}{2\mu}-\frac{GM\mu}{r}
+}.
+\end{equation}
+
+As equações de Hamilton são:
+\begin{equation}
+\dot q_i=\frac{\partial H}{\partial p_i},
+\qquad
+\dot p_i=-\frac{\partial H}{\partial q_i}.
+\end{equation}
+
+Para o centro de massa:
+\begin{equation}
+\dot{\bm R}=\frac{\bm P}{M},
+\qquad
+\dot{\bm P}=0.
+\end{equation}
+\end{frame}
+
+\begin{frame}{Mecânica Hamiltoniana}
+    
+Logo,
+\begin{equation}
+\bm P=\text{constante},
+\qquad
+\bm R(t)=\bm R_0+\frac{\bm P_0}{M}t.
+\end{equation}
+
+Para o movimento relativo:
+\begin{equation}
+\dot{\bm r}=\frac{\bm p}{\mu},
+\end{equation}
+\begin{equation}
+\dot{\bm p}
+=-\frac{\partial}{\partial \bm r}
+\left(-\frac{GM\mu}{r}\right)
+=-GM\mu\frac{\bm r}{r^3}.
+\end{equation}
+
+Como $\bm p=\mu\dot{\bm r}$, resulta
+\begin{equation}
+\boxed{
+\ddot{\bm r}=-\frac{GM}{r^3}\bm r
+}.
+\end{equation}
+
+Assim, o formalismo Hamiltoniano tambem reproduz a solução de Kepler.
+
+\end{frame}
+
+\begin{frame}{Caso de massas variáveis}
+    Agora considere
+$m_1(t)=m_{10}e^{-t/\tau_1}$ e
+$m_2(t)=m_{20}e^{-t/\tau_2},$
+com $m_{10}$, $m_{20}$, $\tau_1$ e $\tau_2$ constantes positivas.
+
+De $F=d/dt(m\bm v)$, e $\bm r = |r_2 - r_1|$ temos:
+
+\begin{equation}
+\frac{d}{dt}(m_1\dot{\bm r}_1)
+=G\frac{m_1m_2}{r^3}\bm r,
+\end{equation}
+\begin{equation}
+\frac{d}{dt}(m_2\dot{\bm r}_2)
+=-G\frac{m_1m_2}{r^3}\bm r.
+\end{equation}
+
+Somando as equações, chegamos em:
+\begin{equation}
+\frac{d}{dt}
+(m_1\bm v_1+m_2\bm v_2)=0.
+\end{equation}
+
+Portanto, nessa convenção, o momento linear total ainda se conserva. Entretanto, a
+energia mecânica usual nao se conserva, pois o potencial depende explicitamente do tempo.
+\end{frame}
+\section{Simulações Computacionais}
+\begin{frame}{Simulações Computacionais}
+    A simulação foi realizada em Python considerando os seguintes casos:
+    
+\begin{enumerate}
+    \item $m_1=m_2$, particulas proximas;
+    \item $m_1=m_2$, particulas nao tao proximas;
+    \item $m_1=333000m_2$, particulas proximas;
+    \item $m_1=333000m_2$, particulas nao tao proximas.
+\end{enumerate}
+
+Em cada caso, são consideradas duas condições iniciais:
+\begin{itemize}
+    \item partículas inicialmente em repouso;
+    \item partículas com velocidade inicial diferente de zero.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusão}
+    Newton, Lagrange e Hamilton levam à mesma solução, mas organizam o problema de
+formas diferentes: forças, ação e espaço de fase, respectivamente. As conservações de
+momento linear, energia e momento angular seguem da ausência de forças externas, da
+independência temporal da Lagrangiana e da simetria rotacional do potencial central.
+\end{frame}
+
+\begin{frame}{Referências}
+ \begin{thebibliography}{99}
+
+\bibitem{}
+BENITEZ, Gustavo.
+\textit{Notas de Aula de Mecânica Clássica}.
+Universidade Federal Fluminense (UFF), 2026.
+
+\end{thebibliography}
+\end{frame}
+
+\end{document}

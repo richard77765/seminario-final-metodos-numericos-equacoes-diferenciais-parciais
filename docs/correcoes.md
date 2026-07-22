@@ -113,13 +113,14 @@ Rodando os solvers reais (não estavam tabulados no artigo):
 | Forte | ✅ Figuras do artigo (campos, convergência, paramétrico) | `scripts/make_figures.py` | 3.7 |
 | Forte | ✅ Paramétrico `Gᵢ/Gₘ` (tabela); ⏳ figura | `scripts/parametric.py` + CSV | 3.7 |
 | Forte | Sensibilidade aos pesos λ da perda | script PINN | 2.4 |
-| Texto | 📝 Reescrever abstract/conclusão (moderar "convergência", "MEF superior") | CORRECOES_LATEX §2 | 3.1, 2.5 |
-| Texto | 📝 §7.1 validação + ordem ~1,5; §7.3 tensões 10⁻¹ | CORRECOES_LATEX §2 + tabelas §3 | 2.1, 2.5 |
-| Texto | 📝 Formulação: espaços `V₀`, levantamento Dirichlet, saltos de interface | CORRECOES_LATEX §4 | 3.3 |
-| Texto | ⏳ Q4/Gauss no corpo do MEF; pós-proc. de tensões | `paper/` §5 | 3.5 |
-| Editorial | 📝 `comparasion`→`comparison`; `Kroenecker`→`Kronecker`; "capítulo"→"seção" | CORRECOES_LATEX §1 | 5 |
-| Editorial | 📝 "Dados": repo versionado + DOI (Zenodo), no idioma do artigo | CORRECOES_LATEX §5 | 3.8 |
-| Editorial | ⏳ Bibliografia 7 → ~25–40 refs (interface/PINN) | `paper/.bib` | 5 |
+| Texto | ✅ Abstract/conclusão reescritos (PINN≠1,14; sem "MEF superior") | `paper/artigo.tex` | 3.1, 2.5 |
+| Texto | ✅ §7.1 validação Dirichlet + ordem ~1,5; §7.3 tensões 10⁻¹; +Tabelas conv/erros/param/gef | `paper/artigo.tex` | 2.1, 2.5 |
+| Texto | ✅ Condições de interface `[[·]]=0`; ⏳ espaços `V₀`/levantamento Dirichlet | `paper/artigo.tex` §3 | 3.3 |
+| Texto | ⏳ Q4/Gauss no corpo do MEF; pós-proc. de tensões | `paper/artigo.tex` §5 | 3.5 |
+| Editorial | ✅ comparison, Kronecker, "seção", autograd, "PINN, tem-se" | `paper/artigo.tex` | 5 |
+| Editorial | ✅ "Dados" em PT + repo versionado/DOI | `paper/artigo.tex` | 3.8 |
+| Editorial | ✅ Bibliografia 7 → **19** (interface/PINN/homogeneização), todas citadas; ⏳ chegar a ~25–40 | `paper/TCAM_bibliography.bib` | 5 |
+| Figuras | ✅ +3 no artigo (convergência, paramétrico, painel 3 métodos); legenda erro.png corrigida | `paper/` | 5 |
 | Template | Converter TCAM.cls → template da REMAT | `paper/` | — |
 
 ---

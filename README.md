@@ -30,31 +30,107 @@ Parâmetros oficiais: `L=1, a=0.15, Gₘ=1, Gᵢ=5, γ=0.01`.
 ## Estrutura
 
 ```
-src/          geometry, analytic, fdm, fem, pinn, metrics, viz   (núcleo)
-scripts/      validate.py  (+ convergence/parametric/pinn_seeds a incluir)
+src/          geometry, analytic, fdm, fem, pinn, metrics, viz, console   (núcleo)
+scripts/      validate, convergence, comparison, parametric, pinn_seeds, make_figures
 outputs/      figures/  tables/                                  (gerados)
-paper/        LaTeX + .bib
+paper/        LaTeX (TCAM_template.tex) + .bib + figuras
 notebooks/    seminario_colab.py     (notebook Colab original, para proveniência)
 docs/         correcoes.md  (rastro das correções vs. parecer)
 ```
 
-## Como reproduzir
+---
 
-```bash
-python -m venv .venv && source .venv/bin/activate   # (Windows: .venv\Scripts\activate)
-pip install -r requirements.txt                     # torch é opcional (só p/ PINN)
+# Como executar
 
-python scripts/validate.py        # validação + convergência (gera outputs/tables/…)
+Núcleo (MDF/MEF, métricas, figuras) precisa só de **numpy + scipy + matplotlib**.
+A **PINN** (`pinn_seeds.py`) precisa de **torch** — roda em CPU (~15 min) ou GPU.
+Todos os scripts usam caminhos relativos ao próprio arquivo, então **rodam de
+qualquer diretório**.
+
+## Opção 1 — Windows (PowerShell)
+
+```powershell
+cd C:\workspace\seminario-final-problema-3-metodo-numerico-edo-edp
+
+# ambiente virtual (opcional, recomendado)
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# dependências do núcleo
+py -m pip install numpy scipy matplotlib
+
+# torch (só p/ a PINN) — no Windows use a build CPU (GPU aqui é via WSL):
+py -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# rodar
+py scripts\comparison.py
+py scripts\validate.py
+py scripts\pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
 ```
 
-Os solvers MDF/MEF usam apenas `numpy`/`scipy`. A PINN requer `torch` e **roda em
-CPU** (~9 min por semente nesta máquina); GPU é opcional (apenas acelera).
-As figuras do artigo saem de `python scripts/make_figures.py`.
+*(Sem venv, é só trocar por `py -m pip install ...` global e `py scripts\...`.)*
+
+## Opção 2 — Linux / WSL
+
+```bash
+sudo apt update && sudo apt install -y python3-venv python3-pip
+cd /mnt/c/workspace/seminario-final-problema-3-metodo-numerico-edo-edp
+
+# venv no HOME do Linux (evita problemas de venv no /mnt/c)
+python3 -m venv ~/venv-seminario
+source ~/venv-seminario/bin/activate      # a cada novo terminal
+
+pip install -r requirements.txt           # numpy, scipy, matplotlib, torch
+python scripts/comparison.py
+python scripts/pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
+```
+
+## Opção 3 — GPU (WSL + CUDA) para a PINN
+
+Pré-requisitos: driver NVIDIA no **Windows** (expõe a GPU ao WSL) e a build **CUDA**
+do torch (é a padrão de `pip install torch` no Linux). Verifique:
+
+```bash
+nvidia-smi                                                   # a GPU aparece?
+python -c "import torch; print('GPU:', torch.cuda.is_available())"
+```
+
+Se `True`, o `pinn_seeds.py` **usa a GPU automaticamente** (detecta o device) —
+muito mais rápido que os ~15 min de CPU. Para forçar: `--device cuda` (ou `cpu`).
+
+## Opção 4 — Google Colab (notebook original)
+
+`notebooks/seminario_colab.py` é autocontido: abra no Colab e **Ambiente de execução
+→ Executar tudo**. As células `%%writefile` recriam os módulos `src/` sozinhas; o
+Colab já traz numpy/scipy/matplotlib/torch. (Ative GPU em *Alterar tipo de ambiente*
+para acelerar a PINN.)
+
+## O que cada script faz
+
+| Script | O que faz | Tempo (CPU) | Precisa torch? |
+|---|---|---|---|
+| `validate.py` | Validação vs analítica circular + convergência (BC mista vs Dirichlet exato) | ~10 s | não |
+| `convergence.py` | Convergência circular (MDF) e quadrada (MDF+MEF, em `w` e `τ`) | ~20 s | não |
+| `comparison.py` | Caso oficial: `G_ef`, erros L² MEF×MDF, métricas de tensão robustas | ~3 s | não |
+| `parametric.py` | Estudo de contraste `Gᵢ/Gₘ ∈ {1,2,5,10,50,100}` | ~3 s | não |
+| `pinn_seeds.py` | PINN decomposta, **múltiplas sementes** (média±desvio, custo) | ~15 min | **sim** |
+| `make_figures.py` | Gera as figuras do artigo em `outputs/figures/` | ~5 s | não\* |
+
+\* `make_figures.py` inclui as figuras da PINN se existir `outputs/pinn_sol_seed*.npz`
+(gerado por `pinn_seeds.py`); sem ele, gera só MDF/MEF.
+
+## Opções e variáveis de ambiente
+
+- `pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000 --device cpu|cuda`
+- **Cores:** `NO_COLOR=1` desliga · `FORCE_COLOR=1` força (útil ao redirecionar)
 
 **Saída colorida (Windows + Linux).** Os scripts imprimem de forma visual e
 consistente, com cor fixa por método — **MDF azul, MEF verde, PINN amarelo**. As
 cores ligam sozinhas no terminal e desligam quando a saída é redirecionada para
-arquivo. Force com `FORCE_COLOR=1` ou desligue com `NO_COLOR=1`.
+arquivo (logs limpos). Sem dependência extra: o `src/console.py` habilita ANSI no
+Windows (`SetConsoleMode`) e usa ANSI nativo no Linux.
+
+---
 
 ## Resultados principais (apurados do próprio código)
 
@@ -79,3 +155,11 @@ Validação (inclusão circular, `Gᵢ=10`), erro L² no interior `0.2 ≤ x,y �
 | 80 | 1,61×10⁻² | 2,50×10⁻³ |
 | 160 | 1,49×10⁻² (estagna) | 8,34×10⁻⁴ (converge, ordem ~1,5) |
 
+Custo aproximado (CPU, `N=80`): MDF ~0,2 s · MEF ~3 s · PINN ~180 s/semente.
+
+## Estado / correções
+
+Repositório em **revisão** segundo o parecer técnico-editorial (alvo: **REMAT**). O
+rastro completo do que foi corrigido e por quê está em
+[`docs/correcoes.md`](docs/correcoes.md); as correções do manuscrito estão aplicadas
+em `paper/…/TCAM_template.tex` (a compilação final é no Overleaf).

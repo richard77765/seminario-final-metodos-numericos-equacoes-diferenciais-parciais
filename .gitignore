@@ -5,10 +5,8 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Artefatos gerados (reproduzíveis via estudos/)
-figuras/
-resultados/*.npz
-
-# Manuscrito e notas de revisão: apenas locais, fora do repositório de código
+# Locais, fora do git (manuscrito, notas de revisão, figuras geradas) — qualquer pasta
 paper/
 docs/
+figuras/
+**/resultados/*.npz

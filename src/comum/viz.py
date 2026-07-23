@@ -18,7 +18,9 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registra projecao 3d)
 
 from ..problema3.geometry import Case, G_field, inclusion_outline, inclusion_mask
 
-FIGDIR = os.path.join(os.path.dirname(__file__), "..", "outputs", "figures")
+# raiz do repositório = três níveis acima de src/comum/viz.py
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+FIGDIR = os.path.join(_REPO, "outputs", "figures")
 W_CMAP = "viridis"
 TAU_CMAP = "coolwarm"
 DIFF_CMAP = "RdBu_r"

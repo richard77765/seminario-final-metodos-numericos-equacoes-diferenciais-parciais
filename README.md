@@ -29,12 +29,23 @@ Parâmetros oficiais: `L=1, a=0.15, Gₘ=1, Gᵢ=5, γ=0.01`.
 
 ## Estrutura
 
+Organizada **por problema** e **por método**:
+
 ```
-src/          geometry, analytic, fdm, fem, pinn, metrics, viz, console   (núcleo)
-scripts/      validate, convergence, comparison, parametric, pinn_seeds, make_figures
-outputs/      figures/  tables/                                  (gerados)
-notebooks/    seminario_colab.py     (notebook Colab original, para proveniência)
+src/
+├── problema3/    geometry.py, analytic.py        # o PROBLEMA: domínio, inclusão, G(x,y),
+│                                                 #   casos e solução analítica de referência
+├── metodos/      mdf.py, mef.py, pinn.py         # por MÉTODO (MDF, MEF, PINN)
+└── comum/        metrics.py, viz.py, console.py  # utilitários compartilhados
+
+scripts/          validate, convergence, comparison, parametric,
+                  interface, pinn_seeds, make_figures   # estudos (rodam os métodos)
+outputs/tables/   CSVs gerados pelos scripts
+notebooks/        seminario_colab.py              # notebook Colab original (proveniência)
 ```
+
+> Importar de fora: `from src.metodos.mdf import solve_fdm`,
+> `from src.problema3.geometry import OFFICIAL`, `from src.comum.metrics import field_errors`.
 
 ---
 

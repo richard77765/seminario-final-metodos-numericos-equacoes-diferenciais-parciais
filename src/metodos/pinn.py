@@ -21,7 +21,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from .geometry import Case, inclusion_mask
+from ..problema3.geometry import Case, inclusion_mask
 
 
 def set_seed(seed=42):
@@ -206,7 +206,7 @@ def train_decomposed(case: Case, epochs=4000, lr=1e-3, hidden=48, layers=5,
 
 def evaluate_decomposed(net_m, net_i, case: Case, N=80, device="cpu"):
     """Avalia as redes numa malha (N+1)x(N+1) e retorna dict no formato dos solvers."""
-    from .geometry import grid, G_field
+    from ..problema3.geometry import grid, G_field
     X, Y, x1d, h = grid(N, case)
     pts = np.column_stack([X.ravel(), Y.ravel()])
     inside = inclusion_mask(pts[:, 0], pts[:, 1], case)
@@ -296,7 +296,7 @@ def train_single_pinn(case: Case, epochs=4000, lr=1e-3, hidden=48, layers=5,
 
 
 def evaluate_single(net, case: Case, N=80, device="cpu"):
-    from .geometry import grid, G_field
+    from ..problema3.geometry import grid, G_field
     X, Y, x1d, h = grid(N, case)
     xy = torch.tensor(np.column_stack([X.ravel(), Y.ravel()]),
                       dtype=torch.float32, device=device)

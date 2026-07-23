@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registra projecao 3d)
 
-from .geometry import Case, G_field, inclusion_outline, inclusion_mask
+from ..problema3.geometry import Case, G_field, inclusion_outline, inclusion_mask
 
 FIGDIR = os.path.join(os.path.dirname(__file__), "..", "outputs", "figures")
 W_CMAP = "viridis"

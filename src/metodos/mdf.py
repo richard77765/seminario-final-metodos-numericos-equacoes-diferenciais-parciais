@@ -18,7 +18,7 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import spsolve
 
-from .geometry import Case, G_field, grid
+from ..problema3.geometry import Case, G_field, grid
 
 
 def _harmonic(a, b):

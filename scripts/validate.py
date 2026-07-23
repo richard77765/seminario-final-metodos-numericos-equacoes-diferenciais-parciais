@@ -20,11 +20,11 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src import console as ui
-from src.analytic import w_analytic
-from src.fdm import solve_fdm
-from src.geometry import VALIDATION
-from src.metrics import rel_l2
+from src.comum import console as ui
+from src.problema3.analytic import w_analytic
+from src.metodos.mdf import solve_fdm
+from src.problema3.geometry import VALIDATION
+from src.comum.metrics import rel_l2
 
 MASK = lambda X, Y: (X > 0.2) & (X < 0.8) & (Y > 0.2) & (Y < 0.8)
 NS = [20, 40, 80, 160]

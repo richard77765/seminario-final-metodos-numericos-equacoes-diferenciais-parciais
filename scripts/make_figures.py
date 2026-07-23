@@ -20,11 +20,11 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src import console as ui
-from src import viz
-from src.fdm import solve_fdm
-from src.fem import solve_fem
-from src.geometry import OFFICIAL
+from src.comum import console as ui
+from src.comum import viz
+from src.metodos.mdf import solve_fdm
+from src.metodos.mef import solve_fem
+from src.problema3.geometry import OFFICIAL
 
 FIG = os.path.join(ROOT, "outputs", "figures")
 TAB = os.path.join(ROOT, "outputs", "tables")

@@ -16,10 +16,10 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src import console as ui
-from src.fdm import solve_fdm
-from src.geometry import Case
-from src.metrics import robust_stress_metrics
+from src.comum import console as ui
+from src.metodos.mdf import solve_fdm
+from src.problema3.geometry import Case
+from src.comum.metrics import robust_stress_metrics
 
 TAB = os.path.join(ROOT, "outputs", "tables")
 RATIOS = [1, 2, 5, 10, 50, 100]

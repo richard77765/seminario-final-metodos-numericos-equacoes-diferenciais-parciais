@@ -21,11 +21,11 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src import console as ui
-from src.fdm import solve_fdm
-from src.fem import solve_fem
-from src.geometry import OFFICIAL
-from src.metrics import field_errors, robust_stress_metrics
+from src.comum import console as ui
+from src.metodos.mdf import solve_fdm
+from src.metodos.mef import solve_fem
+from src.problema3.geometry import OFFICIAL
+from src.comum.metrics import field_errors, robust_stress_metrics
 
 TAB = os.path.join(ROOT, "outputs", "tables")
 

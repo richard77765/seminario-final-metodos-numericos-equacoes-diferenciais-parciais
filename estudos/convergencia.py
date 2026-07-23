@@ -6,7 +6,7 @@
     As malhas grossas são subconjuntos exatos da malha fina (Nf múltiplo de Nc),
     então comparam-se nós coincidentes sem interpolação.
 
-Uso:  python scripts/convergence.py
+Uso:  python estudos/convergencia.py
 """
 
 import os
@@ -17,14 +17,14 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.problema3.analytic import w_analytic
-from src.metodos.mdf import solve_fdm
-from src.metodos.mef import solve_fem
-from src.problema3.geometry import OFFICIAL, VALIDATION
-from src.comum.metrics import rel_l2
+from ferramentas import console as ui
+from problema.analitico import w_analytic
+from metodos.mdf import solve_fdm
+from metodos.mef import solve_fem
+from problema.geometria import OFFICIAL, VALIDATION
+from ferramentas.metricas import rel_l2
 
-TAB = os.path.join(ROOT, "outputs", "tables")
+TAB = os.path.join(ROOT, "resultados")
 
 
 def _ordem(prev, e):
@@ -101,4 +101,4 @@ if __name__ == "__main__":
     print()
     ui.dim("  Leitura: circular ~ordem 1.5 (interface em escada). Em w: MDF ~0.9,")
     ui.dim("  MEF ~1.7. Em tau_xz: ~0.5 (concentracao nas quinas -> parecer 2.3).")
-    ui.ok("Tabelas salvas em outputs/tables/")
+    ui.ok("Tabelas salvas em resultados/")

@@ -10,7 +10,7 @@ em TODO o contorno (``bc_func=w_analytic``). Assim a validação passa a ser
 consistente e o erro converge com o refino.
 
 Uso:
-    python scripts/validate.py
+    python estudos/validacao.py
 """
 
 import os
@@ -20,11 +20,11 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.comum import console as ui
-from src.problema3.analytic import w_analytic
-from src.metodos.mdf import solve_fdm
-from src.problema3.geometry import VALIDATION
-from src.comum.metrics import rel_l2
+from ferramentas import console as ui
+from problema.analitico import w_analytic
+from metodos.mdf import solve_fdm
+from problema.geometria import VALIDATION
+from ferramentas.metricas import rel_l2
 
 MASK = lambda X, Y: (X > 0.2) & (X < 0.8) & (Y > 0.2) & (Y < 0.8)
 NS = [20, 40, 80, 160]
@@ -78,6 +78,6 @@ if __name__ == "__main__":
 
     salva_csv(
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     "outputs", "tables", "validacao_convergencia.csv"),
+                     "resultados", "validacao_convergencia.csv"),
         mista, dirichlet,
     )

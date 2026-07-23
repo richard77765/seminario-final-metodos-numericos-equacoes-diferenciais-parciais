@@ -6,7 +6,7 @@ derivada unilateral de cada fase e comparando o salto ao longo da interface.
 
 Cores: MDF azul, MEF verde, PINN amarelo.
 
-Uso:  python scripts/interface.py
+Uso:  python estudos/interface.py
 """
 
 import glob
@@ -18,13 +18,13 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.metodos.mdf import solve_fdm
-from src.metodos.mef import solve_fem
-from src.problema3.geometry import OFFICIAL
-from src.comum.metrics import interface_flux_error
+from ferramentas import console as ui
+from metodos.mdf import solve_fdm
+from metodos.mef import solve_fem
+from problema.geometria import OFFICIAL
+from ferramentas.metricas import interface_flux_error
 
-TAB = os.path.join(ROOT, "outputs", "tables")
+TAB = os.path.join(ROOT, "resultados")
 
 
 if __name__ == "__main__":
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     sols = [("MDF", solve_fdm(OFFICIAL, N=80)),
             ("MEF", solve_fem(OFFICIAL, N=80))]
 
-    # PINN, se houver solução salva por scripts/pinn_seeds.py
-    npz = sorted(glob.glob(os.path.join(ROOT, "outputs", "pinn_sol_seed*.npz")))
+    # PINN, se houver solução salva por estudos/pinn_multisemente.py
+    npz = sorted(glob.glob(os.path.join(ROOT, "resultados", "pinn_sol_seed*.npz")))
     if npz:
         d = np.load(npz[0])
         sols.append(("PINN", dict(X=d["X"], Y=d["Y"], W=d["W"], txz=d["txz"],
@@ -63,4 +63,4 @@ if __name__ == "__main__":
         f.write("metodo,rms,relativo\n")
         for name, m in linhas:
             f.write(f"{name},{m['rms']:.6e},{m['rel']:.6e}\n")
-    ui.ok("Tabela: outputs/tables/interface_fluxo.csv")
+    ui.ok("Tabela: resultados/interface_fluxo.csv")

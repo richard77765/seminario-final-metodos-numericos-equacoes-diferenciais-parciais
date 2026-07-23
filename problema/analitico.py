@@ -11,7 +11,7 @@ w(0,y) ~ 0 e w(L,y) ~ gamma*L longe da inclusao.
 """
 
 import numpy as np
-from .geometry import Case
+from .geometria import Case
 
 
 def w_analytic(x, y, case: Case):

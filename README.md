@@ -29,32 +29,43 @@ Parâmetros oficiais: `L=1, a=0.15, Gₘ=1, Gᵢ=5, γ=0.01`.
 
 ## Estrutura
 
-Organizada **por problema** e **por método**:
+Os diretórios dizem o que contêm — organizados **por problema** e **por método**:
 
 ```
-src/
-├── problema3/    geometry.py, analytic.py        # o PROBLEMA: domínio, inclusão, G(x,y),
-│                                                 #   casos e solução analítica de referência
-├── metodos/      mdf.py, mef.py, pinn.py         # por MÉTODO (MDF, MEF, PINN)
-└── comum/        metrics.py, viz.py, console.py  # utilitários compartilhados
+problema/       o PROBLEMA físico (comum aos três métodos)
+   ├── geometria.py       domínio, inclusão, campo G(x,y), casos
+   └── analitico.py       solução analítica de referência (inclusão circular)
 
-scripts/          validate, convergence, comparison, parametric,
-                  interface, pinn_seeds, make_figures   # estudos (rodam os métodos)
-outputs/tables/   CSVs gerados pelos scripts
-notebooks/        seminario_colab.py              # notebook Colab original (proveniência)
+metodos/        um arquivo por MÉTODO
+   ├── mdf.py             Método de Diferenças Finitas
+   ├── mef.py             Método de Elementos Finitos
+   └── pinn.py            Physics-Informed Neural Network
+
+ferramentas/    utilitários compartilhados
+   ├── metricas.py        erros, módulo efetivo, métricas de tensão e de interface
+   ├── graficos.py        geração das figuras
+   └── console.py         saída colorida no terminal
+
+estudos/        os experimentos (cada um roda os métodos e gera resultados)
+   ├── validacao.py          validação vs solução analítica + convergência
+   ├── convergencia.py       convergência (inclusão circular e quadrada)
+   ├── comparacao.py         G_ef, erros e métricas de tensão (caso oficial)
+   ├── parametrico.py        estudo de contraste Gᵢ/Gₘ
+   ├── interface.py          erro de continuidade do fluxo na interface
+   ├── pinn_multisemente.py  PINN com várias sementes (média ± desvio, custo)
+   └── figuras.py            gera as figuras
+
+resultados/     tabelas .csv geradas pelos estudos
+notebook/       seminario_colab.py — notebook Colab original (proveniência)
 ```
-
-> Importar de fora: `from src.metodos.mdf import solve_fdm`,
-> `from src.problema3.geometry import OFFICIAL`, `from src.comum.metrics import field_errors`.
 
 ---
 
 # Como executar
 
-Núcleo (MDF/MEF, métricas, figuras) precisa só de **numpy + scipy + matplotlib**.
-A **PINN** (`pinn_seeds.py`) precisa de **torch** — roda em CPU (~15 min) ou GPU.
-Todos os scripts usam caminhos relativos ao próprio arquivo, então **rodam de
-qualquer diretório**.
+O núcleo (MDF, MEF, métricas, figuras) precisa só de **numpy + scipy + matplotlib**.
+A **PINN** precisa de **torch** — roda em CPU (~15 min) ou GPU. Os estudos rodam de
+qualquer pasta.
 
 ## Opção 1 — Windows (PowerShell)
 
@@ -72,12 +83,10 @@ py -m pip install numpy scipy matplotlib
 py -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 # rodar
-py scripts\comparison.py
-py scripts\validate.py
-py scripts\pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
+py estudos\comparacao.py
+py estudos\validacao.py
+py estudos\pinn_multisemente.py --seeds 0,1,2,3,4 --epochs 4000
 ```
-
-*(Sem venv, é só trocar por `py -m pip install ...` global e `py scripts\...`.)*
 
 ## Opção 2 — Linux / WSL
 
@@ -85,59 +94,62 @@ py scripts\pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
 sudo apt update && sudo apt install -y python3-venv python3-pip
 cd /mnt/c/workspace/seminario-final-problema-3-metodo-numerico-edo-edp
 
-# venv no HOME do Linux (evita problemas de venv no /mnt/c)
 python3 -m venv ~/venv-seminario
 source ~/venv-seminario/bin/activate      # a cada novo terminal
 
 pip install -r requirements.txt           # numpy, scipy, matplotlib, torch
-python scripts/comparison.py
-python scripts/pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
+python estudos/comparacao.py
+python estudos/pinn_multisemente.py --seeds 0,1,2,3,4 --epochs 4000
 ```
 
 ## Opção 3 — GPU (WSL + CUDA) para a PINN
 
 Pré-requisitos: driver NVIDIA no **Windows** (expõe a GPU ao WSL) e a build **CUDA**
-do torch (é a padrão de `pip install torch` no Linux). Verifique:
+do torch (padrão de `pip install torch` no Linux). Verifique:
 
 ```bash
 nvidia-smi                                                   # a GPU aparece?
 python -c "import torch; print('GPU:', torch.cuda.is_available())"
 ```
 
-Se `True`, o `pinn_seeds.py` **usa a GPU automaticamente** (detecta o device) —
-muito mais rápido que os ~15 min de CPU. Para forçar: `--device cuda` (ou `cpu`).
+Se `True`, o `pinn_multisemente.py` **usa a GPU automaticamente** (detecta o device).
+Para forçar: `--device cuda` (ou `cpu`).
 
 ## Opção 4 — Google Colab (notebook original)
 
-`notebooks/seminario_colab.py` é autocontido: abra no Colab e **Ambiente de execução
-→ Executar tudo**. As células `%%writefile` recriam os módulos `src/` sozinhas; o
-Colab já traz numpy/scipy/matplotlib/torch. (Ative GPU em *Alterar tipo de ambiente*
-para acelerar a PINN.)
+`notebook/seminario_colab.py` é autocontido: abra no Colab e **Ambiente de execução →
+Executar tudo**. As células `%%writefile` recriam os módulos sozinhas; o Colab já traz
+numpy/scipy/matplotlib/torch. (Ative GPU em *Alterar tipo de ambiente* para acelerar a
+PINN.)
 
-## O que cada script faz
+## O que cada estudo faz
 
-| Script | O que faz | Tempo (CPU) | Precisa torch? |
+| Estudo | O que faz | Tempo (CPU) | Precisa torch? |
 |---|---|---|---|
-| `validate.py` | Validação vs analítica circular + convergência (BC mista vs Dirichlet exato) | ~10 s | não |
-| `convergence.py` | Convergência circular (MDF) e quadrada (MDF+MEF, em `w` e `τ`) | ~20 s | não |
-| `comparison.py` | Caso oficial: `G_ef`, erros L² MEF×MDF, métricas de tensão robustas | ~3 s | não |
-| `parametric.py` | Estudo de contraste `Gᵢ/Gₘ ∈ {1,2,5,10,50,100}` | ~3 s | não |
-| `pinn_seeds.py` | PINN decomposta, **múltiplas sementes** (média±desvio, custo) | ~15 min | **sim** |
-| `make_figures.py` | Gera as figuras do artigo em `outputs/figures/` | ~5 s | não\* |
+| `validacao.py` | Validação vs analítica circular + convergência (BC mista vs Dirichlet exato) | ~10 s | não |
+| `convergencia.py` | Convergência circular (MDF) e quadrada (MDF+MEF, em `w` e `τ`) | ~20 s | não |
+| `comparacao.py` | Caso oficial: `G_ef`, erros L² MEF×MDF, métricas de tensão robustas | ~3 s | não |
+| `parametrico.py` | Estudo de contraste `Gᵢ/Gₘ ∈ {1,2,5,10,50,100}` | ~3 s | não |
+| `interface.py` | Erro de continuidade do fluxo normal na interface | ~5 s | não |
+| `pinn_multisemente.py` | PINN decomposta, **várias sementes** (média±desvio, custo) | ~15 min | **sim** |
+| `figuras.py` | Gera as figuras em `figuras/` | ~5 s | não\* |
 
-\* `make_figures.py` inclui as figuras da PINN se existir `outputs/pinn_sol_seed*.npz`
-(gerado por `pinn_seeds.py`); sem ele, gera só MDF/MEF.
+\* `figuras.py` inclui as figuras da PINN se existir `resultados/pinn_sol_seed*.npz`
+(gerado por `pinn_multisemente.py`); sem ele, gera só MDF/MEF.
 
 ## Opções e variáveis de ambiente
 
-- `pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000 --device cpu|cuda`
+- `pinn_multisemente.py --seeds 0,1,2,3,4 --epochs 4000 --device cpu|cuda`
 - **Cores:** `NO_COLOR=1` desliga · `FORCE_COLOR=1` força (útil ao redirecionar)
 
-**Saída colorida (Windows + Linux).** Os scripts imprimem de forma visual e
-consistente, com cor fixa por método — **MDF azul, MEF verde, PINN amarelo**. As
-cores ligam sozinhas no terminal e desligam quando a saída é redirecionada para
-arquivo (logs limpos). Sem dependência extra: o `src/console.py` habilita ANSI no
-Windows (`SetConsoleMode`) e usa ANSI nativo no Linux.
+**Saída colorida (Windows + Linux).** Os estudos imprimem de forma visual e
+consistente, com cor fixa por método — **MDF azul, MEF verde, PINN amarelo**. As cores
+ligam sozinhas no terminal e desligam quando a saída vai para arquivo (logs limpos).
+Sem dependência extra: `ferramentas/console.py` habilita ANSI no Windows
+(`SetConsoleMode`) e usa ANSI nativo no Linux.
+
+> Importar de fora: `from metodos.mdf import solve_fdm`,
+> `from problema.geometria import OFFICIAL`, `from ferramentas.metricas import field_errors`.
 
 ---
 

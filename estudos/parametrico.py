@@ -5,7 +5,7 @@ contraste, mas sem tabela/figura. Aqui gera-se a evidência com MDF (N=80),
 reportando G_ef e métricas de tensão ROBUSTAS — mostrando que o pico pontual
 (max) exagera o efeito frente ao p99/max_far (parecer 2.3).
 
-Uso:  python scripts/parametric.py
+Uso:  python estudos/parametrico.py
 """
 
 import os
@@ -16,12 +16,12 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.metodos.mdf import solve_fdm
-from src.problema3.geometry import Case
-from src.comum.metrics import robust_stress_metrics
+from ferramentas import console as ui
+from metodos.mdf import solve_fdm
+from problema.geometria import Case
+from ferramentas.metricas import robust_stress_metrics
 
-TAB = os.path.join(ROOT, "outputs", "tables")
+TAB = os.path.join(ROOT, "resultados")
 RATIOS = [1, 2, 5, 10, 50, 100]
 
 if __name__ == "__main__":
@@ -49,4 +49,4 @@ if __name__ == "__main__":
         for r, gef, m in linhas:
             f.write(f"{r},{gef:.6f},{m['max']:.6f},{m['p99']:.6f},"
                     f"{m['max_far']:.6f},{m['l2']:.6f}\n")
-    print("Tabela: outputs/tables/parametrico_contraste.csv")
+    print("Tabela: resultados/parametrico_contraste.csv")

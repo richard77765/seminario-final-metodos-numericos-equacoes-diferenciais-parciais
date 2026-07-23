@@ -1,10 +1,10 @@
-"""Gera as figuras do artigo em outputs/figures/ (matplotlib Agg, sem GPU).
+"""Gera as figuras do artigo em figuras/ (matplotlib Agg, sem GPU).
 
 Reexecutável: gera já as figuras de MDF/MEF, convergência e paramétrico; se
-existir ``outputs/pinn_sol_seed*.npz`` (produzido por scripts/pinn_seeds.py),
+existir ``resultados/pinn_sol_seed*.npz`` (produzido por estudos/pinn_multisemente.py),
 acrescenta o painel dos três métodos e as figuras da PINN.
 
-Uso:  python scripts/make_figures.py
+Uso:  python estudos/figuras.py
 """
 
 import csv
@@ -20,14 +20,14 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.comum import viz
-from src.metodos.mdf import solve_fdm
-from src.metodos.mef import solve_fem
-from src.problema3.geometry import OFFICIAL
+from ferramentas import console as ui
+from ferramentas import graficos as viz
+from metodos.mdf import solve_fdm
+from metodos.mef import solve_fem
+from problema.geometria import OFFICIAL
 
-FIG = os.path.join(ROOT, "outputs", "figures")
-TAB = os.path.join(ROOT, "outputs", "tables")
+FIG = os.path.join(ROOT, "figuras")
+TAB = os.path.join(ROOT, "resultados")
 os.makedirs(FIG, exist_ok=True)
 
 
@@ -45,7 +45,7 @@ def main():
     sol_fem = solve_fem(OFFICIAL, N=80)
     sols = {"MDF": sol_fdm, "MEF": sol_fem}
 
-    npz = sorted(glob.glob(os.path.join(ROOT, "outputs", "pinn_sol_seed*.npz")))
+    npz = sorted(glob.glob(os.path.join(ROOT, "resultados", "pinn_sol_seed*.npz")))
     if npz:
         d = np.load(npz[0])
         sols["PINN"] = dict(X=d["X"], Y=d["Y"], W=d["W"], txz=d["txz"],
@@ -104,7 +104,7 @@ def main():
     plt.close("all")
     chips = "  ".join(ui.method(m) for m in sols)
     print()
-    ui.ok(f"Figuras em outputs/figures/   (metodos: {chips})")
+    ui.ok(f"Figuras em figuras/   (metodos: {chips})")
 
 
 if __name__ == "__main__":

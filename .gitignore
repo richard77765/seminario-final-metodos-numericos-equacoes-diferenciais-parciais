@@ -5,10 +5,9 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Artefatos gerados (reproduzíveis via scripts/)
-outputs/figures/*.png
-outputs/figures/*.pdf
-outputs/*.npz
+# Artefatos gerados (reproduzíveis via estudos/)
+figuras/
+resultados/*.npz
 
 # Manuscrito e notas de revisão: apenas locais, fora do repositório de código
 paper/

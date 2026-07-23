@@ -10,7 +10,7 @@ Endereça:
 
 Cores: MDF azul, MEF verde (ver src/console.py).
 
-Uso:  python scripts/comparison.py
+Uso:  python estudos/comparacao.py
 """
 
 import os
@@ -21,13 +21,13 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.metodos.mdf import solve_fdm
-from src.metodos.mef import solve_fem
-from src.problema3.geometry import OFFICIAL
-from src.comum.metrics import field_errors, robust_stress_metrics
+from ferramentas import console as ui
+from metodos.mdf import solve_fdm
+from metodos.mef import solve_fem
+from problema.geometria import OFFICIAL
+from ferramentas.metricas import field_errors, robust_stress_metrics
 
-TAB = os.path.join(ROOT, "outputs", "tables")
+TAB = os.path.join(ROOT, "resultados")
 
 
 def voigt_reuss(case):
@@ -86,4 +86,4 @@ if __name__ == "__main__":
             fcsv.write(f"{k},{err[k]:.6e}\n")
 
     print()
-    ui.ok("Tabelas: outputs/tables/comparacao_oficial.csv, erros_mef_vs_mdf.csv")
+    ui.ok("Tabelas: resultados/comparacao_oficial.csv, erros_mef_vs_mdf.csv")

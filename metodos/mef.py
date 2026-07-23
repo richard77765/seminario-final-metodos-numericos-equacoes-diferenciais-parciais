@@ -16,7 +16,7 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import spsolve
 
-from ..problema3.geometry import Case, grid, inclusion_mask
+from problema.geometria import Case, grid, inclusion_mask
 
 # Pontos e pesos de Gauss 2x2 no elemento de referencia [-1,1]^2
 _GP = 1.0 / np.sqrt(3.0)
@@ -110,7 +110,7 @@ def solve_fem(case: Case, N=80):
 def _stresses_fem(W, X, Y, case, N, h):
     """Tensoes nodais. Usa G nodal (consistente com a visualizacao) e gradiente
     central de w; e a mesma convencao do MDF, o que torna a comparacao justa."""
-    from ..problema3.geometry import G_field
+    from problema.geometria import G_field
     Gnod = G_field(X, Y, case)
     dwdx = np.gradient(W, h, axis=0)
     dwdy = np.gradient(W, h, axis=1)

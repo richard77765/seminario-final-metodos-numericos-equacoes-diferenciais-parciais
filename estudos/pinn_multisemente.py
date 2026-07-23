@@ -6,10 +6,10 @@ G_ef e dos erros vs MDF, além do TEMPO de parede e do nº de parâmetros trein�
 
 Requer PyTorch; roda em CPU (~9 min/semente nesta máquina) ou GPU, se houver.
 
-    python scripts/pinn_seeds.py --seeds 0,1,2,3,4 --epochs 4000
-    python scripts/pinn_seeds.py --seeds 0,1,2,3,4,5,6,7,8,9  # 10 sementes
+    python estudos/pinn_multisemente.py --seeds 0,1,2,3,4 --epochs 4000
+    python estudos/pinn_multisemente.py --seeds 0,1,2,3,4,5,6,7,8,9  # 10 sementes
 
-Salva outputs/tables/pinn_seeds.csv e ...pinn_seeds_resumo.csv.
+Salva resultados/pinn_seeds.csv e ...pinn_seeds_resumo.csv.
 """
 
 import argparse
@@ -22,13 +22,13 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.comum import console as ui
-from src.metodos import pinn
-from src.metodos.mdf import solve_fdm
-from src.problema3.geometry import OFFICIAL
-from src.comum.metrics import field_errors
+from ferramentas import console as ui
+from metodos import pinn
+from metodos.mdf import solve_fdm
+from problema.geometria import OFFICIAL
+from ferramentas.metricas import field_errors
 
-TAB = os.path.join(ROOT, "outputs", "tables")
+TAB = os.path.join(ROOT, "resultados")
 
 
 def _n_params(net):
@@ -66,7 +66,7 @@ def main():
         dt = time.time() - t0
         err = field_errors(sol, ref)
         if s == seeds[0]:  # guarda uma solucao para gerar as figuras da PINN
-            np.savez(os.path.join(ROOT, "outputs", f"pinn_sol_seed{s}.npz"),
+            np.savez(os.path.join(ROOT, "resultados", f"pinn_sol_seed{s}.npz"),
                      X=sol["X"], Y=sol["Y"], W=sol["W"],
                      txz=sol["txz"], tyz=sol["tyz"])
         if n_par is None:
@@ -113,7 +113,7 @@ def main():
             m, d, lo, hi = ms(c)
             f.write(f"{c},{m:.6f},{d:.6f},{lo:.6f},{hi:.6f}\n")
         f.write(f"n_parametros,{n_par},0,{n_par},{n_par}\n")
-    ui.ok("Tabelas: outputs/tables/pinn_seeds.csv, pinn_seeds_resumo.csv")
+    ui.ok("Tabelas: resultados/pinn_seeds.csv, pinn_seeds_resumo.csv")
 
 
 if __name__ == "__main__":

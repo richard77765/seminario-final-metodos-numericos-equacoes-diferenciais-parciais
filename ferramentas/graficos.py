@@ -2,7 +2,7 @@
 
 Convencoes:
   - Toda figura de campo sobrepoe o contorno da inclusao (`overlay_inclusion`).
-  - Saidas em outputs/figures/ com dpi>=150.
+  - Saidas em figuras/ com dpi>=150.
   - Paleta consistente: 'viridis' para w, 'coolwarm'/'RdBu_r' para fluxos e diffs.
   - As malhas seguem a convencao 'ij' (X[i,j], Y[i,j]); para pcolormesh/imshow
     usamos .T para mapear (linhas=y, colunas=x) corretamente.
@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registra projecao 3d)
 
-from ..problema3.geometry import Case, G_field, inclusion_outline, inclusion_mask
+from problema.geometria import Case, G_field, inclusion_outline, inclusion_mask
 
 # raiz do repositório = três níveis acima de src/comum/viz.py
-_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-FIGDIR = os.path.join(_REPO, "outputs", "figures")
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIGDIR = os.path.join(_REPO, "figuras")
 W_CMAP = "viridis"
 TAU_CMAP = "coolwarm"
 DIFF_CMAP = "RdBu_r"
@@ -264,7 +264,7 @@ def fig_loss_history(history: dict, save="12_loss_pinn.png"):
 
 def fig_scatter_r2(w_pred, w_ref, save="13_scatter_r2.png", label="PINN"):
     """Fig 13: scatter w_pred x w_ref com R^2 anotado."""
-    from .metrics import r2_score
+    from .metricas import r2_score
     w_pred = np.asarray(w_pred).ravel()
     w_ref = np.asarray(w_ref).ravel()
     r2 = r2_score(w_pred, w_ref)
